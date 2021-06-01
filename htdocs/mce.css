@@ -1,0 +1,109 @@
+.shortlink {
+    font-size: smaller;
+}
+.addrhist .escrow .balance {
+    opacity: 0.5; /* standard */
+    filter: alpha(opacity = 50); /* MSIE */
+}
+.ellipses {
+    border: 1px black solid;
+    padding: 3px;
+    border-radius: 5px;
+}
+.text-monospace {
+    font-family: monospace;
+}
+.popover {
+    max-width: 400px;
+    word-wrap: break-word;
+}
+
+
+.tag {
+  display: inline;
+  padding: .2em .6em .3em;
+  font-size: 75%;
+  font-weight: bold;
+  line-height: 1;
+  color: #fff;
+  text-align: center;
+  white-space: nowrap;
+  vertical-align: baseline;
+  border-radius: .25em;
+/*background-color: hsl(0,0%,50%);*/
+}
+
+navbar {
+   margin:2em;
+   text-align:center;
+}
+
+.navbar::before {
+/*   content: "Page: ";*/
+}
+
+.navbar-selected
+{
+   font-weight: bold;
+}
+
+.navbar a,.navbar-selected {
+   padding:5px 10px;
+   background:#ddd;
+   margin:0 1px;
+}
+
+.navbar a:hover {
+   background:#bbb;
+   text-decoration:none;
+}
+
+.tag-grant-high                   {background-color: hsl(  0,100%, 40%);}
+.tag-revoke-high                  {background-color: hsl(  0,100%, 40%);}
+.tag-grant-low                    {background-color: hsl(  0, 80%, 60%);}
+.tag-revoke-low                   {background-color: hsl(  0, 80%, 60%);}
+.tag-grant-per-entity             {background-color: hsl(  0, 80%, 80%);}
+.tag-revoke-per-entity            {background-color: hsl(  0, 80%, 80%);}
+
+.tag-new-asset-units              {background-color: hsl(120, 60%, 30%);}
+.tag-create-asset                 {background-color: hsl(120, 60%, 30%);}
+.tag-native-transfer              {background-color: hsl(120, 60%, 60%);}
+.tag-asset-transfer               {background-color: hsl(120, 60%, 60%);}
+.tag-native                       {background-color: hsl(120, 60%, 60%);}
+.tag-asset                        {background-color: hsl(120, 60%, 60%);}
+.tag-multiple-assets              {background-color: hsl(120, 60%, 60%);}
+.tag-more-asset-units             {background-color: hsl(120, 60%, 30%);}
+.tag-update-asset                 {background-color: hsl(120, 60%, 30%);}
+
+
+.tag-create-stream                {background-color: hsl(230, 80%, 30%);}
+.tag-multiple-stream-items        {background-color: hsl(200, 80%, 30%);}
+.tag-offchain-stream-item         {background-color: hsl(200, 80%, 30%);}
+.tag-onchain-stream-item          {background-color: hsl(200, 80%, 60%);}
+.tag-inline-data                  {background-color: hsl(200, 50%, 30%);}            
+.tag-raw-data                     {background-color: hsl(200, 50%, 60%);}
+
+.tag-create-filter                {background-color: hsl( 40, 80%, 60%);}
+.tag-create-variable              {background-color: hsl( 40, 80%, 60%);}
+.tag-create-library               {background-color: hsl( 40, 80%, 60%);}
+.tag-update-variable              {background-color: hsl( 40, 80%, 60%);}
+.tag-update-library               {background-color: hsl( 40, 80%, 60%);}
+
+.tag-pay-to-script-hash           {background-color: hsl(300, 80%, 40%);}
+.tag-not-p2pkh-p2sh               {background-color: hsl(300,100%, 70%);}
+.tag-combine                      {background-color: hsl(300,100%, 70%);}
+
+.tag-coinbase                     {background-color: hsl(  0,  0%, 80%);}
+.tag-cached-script                {background-color: hsl(  0,  0%, 30%);}
+.tag-new-license-token-unit       {background-color: hsl(  0,  0%, 30%);}
+.tag-license-transfer             {background-color: hsl(  0,  0%, 30%);}
+.tag-license                      {background-color: hsl(  0,  0%, 30%);}
+.tag-create-upgrade               {background-color: hsl(  0,  0%, 30%);}
+.tag-create-license               {background-color: hsl(  0,  0%, 30%);}
+.tag-filter-or-library-approval   {background-color: hsl(  0,  0%, 30%);}
+.tag-upgrade-approval             {background-color: hsl(  0,  0%, 30%);}
+
+.inner-table                      {margin-bottom: 0px;}
+.highlighted                      {background-color: hsl(160,  100%, 95%);}
+.empty-list                       {background-color: hsl(40,  100%, 95%);color: hsl(40,  100%, 50%);font-weight: bold;  padding: 15px; margin-bottom: 20px;border: 1px solid transparent;  border-radius: 4px;}
+
