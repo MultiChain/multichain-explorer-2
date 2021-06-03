@@ -962,9 +962,9 @@ class MCEDataHandler():
 #            body += '<td><a href="/' + chain.config['path-name'] + '/transaction/' + tx['txid'] + '">' + tx['txid'] + '</a>' +  label_html + '</td>'                        
             body += '<td><a href="/' + chain.config['path-name'] + '/transaction/' + tx['txid'] + '">' + tx['txid'] + '</a>'  + '</td>'                        
             body += '<td>' +  label_html + '</td>'                        
-            if tx['blockindex'] is not None:                
+            if tx['blockheight'] is not None:                
                 body += '<td>' + format_time(tx['blocktime']) + '</td>'                        
-                body += '<td><a href="/' + chain.config['path-name'] + '/block/' + str(tx['blockindex']) + '">' + str(tx['blockindex']) + '</a></td>'                        
+                body += '<td><a href="/' + chain.config['path-name'] + '/block/' + str(tx['blockheight']) + '">' + str(tx['blockheight']) + '</a></td>'                        
             else:
                 body += '<td></td><td></td>'
             body += '</tr>'
@@ -1116,9 +1116,9 @@ class MCEDataHandler():
             body += '<td align="right">' + signed_amount_html(tx['amount']) + '</td>'                        
             body += '<td align="right">' + str(tx['balance']) + '</td>'                        
                 
-            if tx['blockindex'] is not None:                
+            if tx['blockheight'] is not None:                
                 body += '<td>' + format_time(tx['blocktime']) + '</td>'                        
-                body += '<td><a href="/' + chain.config['path-name'] + '/block/' + str(tx['blockindex']) + '">' + str(tx['blockindex']) + '</a></td>'                        
+                body += '<td><a href="/' + chain.config['path-name'] + '/block/' + str(tx['blockheight']) + '">' + str(tx['blockheight']) + '</a></td>'                        
             else:
                 body += '<td></td><td></td>'
             body += '</tr>'
@@ -1167,9 +1167,9 @@ class MCEDataHandler():
 #            body += '<td><a href="/' + chain.config['path-name'] + '/transaction/' + tx['txid'] + '">' + tx['txid'] + '</a>' +  label_html + '</td>'                        
             body += '<td><a href="/' + chain.config['path-name'] + '/transaction/' + tx['txid'] + '">' + tx['txid'] + '</a>'  + '</td>'                        
             body += '<td>' +  label_html + '</td>'                        
-            if tx['blockindex'] is not None:                
+            if tx['blockheight'] is not None:                
                 body += '<td>' + format_time(tx['blocktime']) + '</td>'                        
-                body += '<td><a href="/' + chain.config['path-name'] + '/block/' + str(tx['blockindex']) + '">' + str(tx['blockindex']) + '</a></td>'                        
+                body += '<td><a href="/' + chain.config['path-name'] + '/block/' + str(tx['blockheight']) + '">' + str(tx['blockheight']) + '</a></td>'                        
             else:
                 body += '<td></td><td></td>'
             body += '</tr>'
@@ -1430,6 +1430,8 @@ class MCEDataHandler():
                 body += '<tr>'
                 body += '<td>Native</td>'
                 body += '<td>'+str(chain_rewards)+'</td>'
+                if max_count>0:
+                    body += '<td></td>'            
                 body += '<td>'+str(native_units)+'</td>'
                 body += '<td></td><td></td><td></td>'
                 body += '</tr>'                    
@@ -1892,9 +1894,9 @@ class MCEDataHandler():
             if keytype is None:
                 body += '<td>'+tx_html+'</td>'                        
                 body += '<td>'+holders_html+'</td>'                
-                if tx['blockindex'] is not None:                
+                if tx['blockheight'] is not None:                
                     body += '<td>' + format_time(tx['blocktime']) + '</td>'                        
-                    body += '<td><a href="/' + chain.config['path-name'] + '/block/' + str(tx['blockindex']) + '">' + str(tx['blockindex']) + '</a></td>'                        
+                    body += '<td><a href="/' + chain.config['path-name'] + '/block/' + str(tx['blockheight']) + '">' + str(tx['blockheight']) + '</a></td>'                        
                 else:
                     body += '<td></td><td></td>'
             body += '</tr>'
@@ -2422,8 +2424,8 @@ class MCEDataHandler():
         body = '<table class="table table-bordered table-striped table-condensed">'            
         body += '<tr><td>Hash</td><td>'+info['txid']+'</td></tr>'        
         body += '<tr><td>Confirmed In</td><td>'
-        if info['blockindex'] is not None:
-            body += '<a href="/' + chain.config['path-name'] + '/block/'+str(info['blockindex'])+'">Block ' + str(info['blockindex']) +  '</a> (' +format_time(info['blocktime']) +')'            
+        if info['blockheight'] is not None:
+            body += '<a href="/' + chain.config['path-name'] + '/block/'+str(info['blockheight'])+'">Block ' + str(info['blockheight']) +  '</a> (' +format_time(info['blocktime']) +')'            
         body += '</td></tr>'        
 
         holders_html=''

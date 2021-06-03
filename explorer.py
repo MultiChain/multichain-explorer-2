@@ -17,14 +17,15 @@ explorer_version = "1.0"
 def main(argv):
 
     if len(argv) == 0:
-        print ("""\nUsage: python3 -m explorer config-file.ini ( stop | daemon )
+        print ("""\nUsage: python3 explorer.py config-file.ini ( daemon | stop | status )
 
 """ + explorer_app +""", version """ + explorer_app +"""
 
-  config-file               Configuration file, see mcexplorer_example.conf for examples.
+  config-file               Configuration file, see example.ini for examples.
   action                    Optional, one of the following:
-      stop                  Stop running explorer
       daemon                Start explorer as daemon
+      stop                  Stop running explorer
+      status                Get explorer status
 """)
         return 0
 
