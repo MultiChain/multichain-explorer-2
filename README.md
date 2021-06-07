@@ -41,11 +41,11 @@ To use the Explorer with an existing blockchain, [upgrade one of its nodes](http
 
     multichaind chain1 -daemon -rescan -explorersupport=1
     
-Substitute `chain1` with the chain's name as appropriate. After the first run, the `rescan` and `explorersupport` parameters are no longer required:
+Substitute `chain1` with the chain's name as appropriate. After the first run, the extra parameters are no longer required:
 
     multichaind chain1 -daemon
     
-Supporting the Explorer adds storage and processing requirements to a node. To stop Explorer support, stop a node then restart it as follows:
+Supporting the Explorer adds storage and processing requirements to a node. To remove Explorer support, stop the node then restart it as follows:
 
     multichaind chain1 -daemon -rescan -explorersupport=0
 
