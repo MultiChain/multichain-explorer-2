@@ -30,7 +30,7 @@ For new blockchains
 If you do not yet have a blockchain to explore, [download and install](http://www.multichain.com/download-install/) MultiChain 2.2 beta 2 or later, then create and initialize a new chain as follows:
 
     multichain-util create chain1
-    multichaind chain1 -daemon -explorersupport
+    multichaind chain1 -daemon -explorersupport=1
     
 You may optionally choose a name other than `chain1` and adjust the [blockchain parameters](https://www.multichain.com/developers/blockchain-parameters/) before running `multichaind` above.
     
@@ -39,13 +39,17 @@ For existing blockchains
 
 To use the Explorer with an existing blockchain, [upgrade one of its nodes](https://www.multichain.com/developers/upgrading-nodes-chains/) to MultiChain 2.2 beta 2 or later, then restart it as follows:
 
-    multichaind chain1 -daemon -rescan -explorersupport
+    multichaind chain1 -daemon -rescan -explorersupport=1
     
-Substitute `chain1` with the chain's name as appropriate. After the first run, the `-rescan` parameter is no longer required:
+Substitute `chain1` with the chain's name as appropriate. After the first run, the `rescan` and `explorersupport` parameters are no longer required:
 
-    multichaind chain1 -daemon -explorersupport
+    multichaind chain1 -daemon
     
-If you add `explorersupport=1` to the node's `multichain.conf` file, this parameter is no longer required on the command line.
+Supporting the Explorer adds storage and processing requirements to a node. To stop Explorer support, stop a node then restart it as follows:
+
+    multichaind chain1 -daemon -rescan -explorersupport=0
+
+As before, after this first run, the `rescan` and `explorersupport` parameters are no longer required.
     
 Configuring the Explorer
 ------------------------
