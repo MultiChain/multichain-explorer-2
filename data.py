@@ -32,36 +32,36 @@ TAG_TO_LABEL_TEXT={
             "pay-to-script-hash" : "P2SH Address",
             "not-p2pkh-p2sh" : "Unusual Address",
             "coinbase" : "Coinbase",
-            "cached-script" : "",
             "grant-high" : "Grant Permission (high)",
             "revoke-high" : "Revoke Permission (high)",
             "grant-low" : "Grant Permission",
             "revoke-low" : "Revoke Permission",
             "grant-per-entity" : "Grant Per-Entity",
             "revoke-per-entity" : "Revoke Per-Entity",
-            "new-license-token-unit" : "New License Token",
-            "new-asset-units" : "Issue Asset",
-            "license-transfer" : "Transfer License",
-            "asset-transfer" : "Transfer Asset",
-            "native-transfer" : "Native Transfer",
+            "issue-license-unit" : "New License Token",
+            "issue-asset-units" : "Issue Asset",
+            "transfer-license" : "Transfer License",
+            "transfer-asset" : "Transfer Asset",
+            "transfer-native" : "Native Transfer",
             "license" : "License Token",
             "asset" : "Asset",
             "native" : "Native",
             "multiple-assets" : "2+ Assets",
-            "combine" : "Combine",
-            "more-asset-units" : "Issue More",
-            "create-asset" : "Issue Asset (Metadata)",
+            "combine-utxos" : "Combine",
+            "issuemore-asset-units" : "Issue More",
+            "issue-asset-details" : "Issue Asset (Metadata)",
             "create-stream" : "Create Stream",
+            "create-pseudo-stream" : "",
             "create-upgrade" : "Create Upgrade",
             "create-filter" : "Create Filter",
             "create-license" : "Create License",
             "create-variable" : "Create Variable",
             "create-library" : "Create Library",
-            "update-asset" : "Issue Asset Follow-On (Metadata)",
+            "issuemore-asset-details" : "Issue Asset Follow-On (Metadata)",
             "update-variable" : "Update Variable",
             "update-library" : "Update Library",
-            "filter-or-library-approval" : "Approve Filter Or Library",
-            "upgrade-approval" : "Approve Upgrade",
+            "approve-filter-library" : "Approve Filter Or Library",
+            "approve-upgrade" : "Approve Upgrade",
             "inline-data" : "Inline Metadata",
             
             "offchain-stream-item" : "Offchain Item",
@@ -69,23 +69,23 @@ TAG_TO_LABEL_TEXT={
             "multiple-stream-items" : "2+ Stream Items",
             "inline-data" : "Inline Data",
             "raw-data" : "Raw Metadata",
-            "unspendable" : ""
+            "unspendable" : "",
         }
 
 TAG_TO_LABEL_TYPE={
             "coinbase" : "default",
             "not-p2pkh-p2sh" : "warning",
             "permission-admin-mine" : "warning",
-            "filter-or-library-approval" :  "warning",       
-            "upgrade-approval" :  "warning",       
+            "approve-filter-library" :  "warning",       
+            "approve-upgrade" :  "warning",       
         }
 
 TAG_REMOVE_IF_OTHER_PRESENT={"grant-low":"grant-high",
                              "revoke-low":"revoke-high",
-                             "create-asset":"new-asset-units",
-                             "update-asset":"more-asset-units",
-                             "asset-transfer":"multiple-assets",
-                             "new-license-token-unit":"create-license"}
+                             "issue-asset-details":"issue-asset-units",
+                             "issuemore-asset-details":"issuemore-asset-units",
+                             "transfer-asset":"multiple-assets",
+                             "issue-license-unit":"create-license"}
 
 def decode_script(script):
     
@@ -1308,7 +1308,7 @@ class MCEDataHandler():
         
         stream_count=chain.request("explorerlistaddressstreams",[address,"-"])
         if stream_count['result'] is None:
-            return self.standard_response(stream_count)
+            return self.error_response(stream_count)
         last=stream_count['result']
         
         if last<=0:
@@ -1762,7 +1762,7 @@ class MCEDataHandler():
             
         asset_count=chain.request("explorerlistassetaddresses",[entity_name,"-"])
         if asset_count['result'] is None:
-            return self.standard_response(asset_count)
+            return self.error_response(asset_count)
         last=asset_count['result']
         
         self.expand_params(nparams,last)
@@ -1988,6 +1988,7 @@ class MCEDataHandler():
         api_params.append(True)            
 
         summary=chain.request(count_method,count_params)
+
         if summary['result'] is None:
             return self.error_response(summary)
         if summary['result'][0] is None:
@@ -1999,8 +2000,11 @@ class MCEDataHandler():
             if publisher is not None:
                 return self.standard_response('<div class="empty-list">No items have been published by this address in this stream</div>')            
             if streamkey is not None:
-                return self.standard_response('<div class="empty-list">No items have been published with this key in this stream</div>')                        
-            return self.standard_response('<div class="empty-list">No items have been published in this stream</div>')            
+                return self.standard_response('<div class="empty-list">No items have been published with this key in this stream</div>')       
+            if summary['result'][0]['items'] > 0:
+                return self.standard_response('<div class="empty-list">The required index is not active for this subscription</div>')            
+            else:
+                return self.standard_response('<div class="empty-list">No items have been published in this stream</div>')            
                 
         self.expand_params(nparams,last)
         
@@ -2517,7 +2521,7 @@ class MCEDataHandler():
         index=0
         for vout in info['vout']:
             license_vout=False
-            if ("new-license-token-unit" in vout['tags']) or ("license" in vout['tags']):
+            if ("issue-license-unit" in vout['tags']) or ("license" in vout['tags']):
                 license_vout=True
             td_class=""
             if ('highlight' in nparams) and  nparams['highlight'] == "o"+str(index):
@@ -2548,7 +2552,7 @@ class MCEDataHandler():
                 body += '<td'+td_class+'>'+addresses+'</td>'
                 body += '<td'+td_class+'>'+tags_to_label_html(vout['tags']).replace("Transfer Asset","Asset").replace("Native Transfer","Native")+'</td>'
                 details+=self.vout_assettransfers(chain,vout)            
-            if (("create-asset" in vout['tags']) or ("update-asset" in vout['tags'])) and ('issue' in info) :
+            if (("issue-asset-details" in vout['tags']) or ("issuemore-asset-details" in vout['tags'])) and ('issue' in info) :
                 details+=self.vout_assetmetadata(chain,info['issue'],str(params[0]))                            
             details+=self.vout_streamitems(chain,vout,str(params[0]),index)            
             if ("create-stream" in vout['tags']) and ('create' in info) :

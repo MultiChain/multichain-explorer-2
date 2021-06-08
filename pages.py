@@ -41,7 +41,7 @@ DEFAULT_TEMPLATE = """
     <br><br>
     <p style="font-size: smaller">
         <span style="font-style: italic">
-            Powered by <a href="https://github.com/MultiChain/multichain-explorer">MultiChain Explorer</a>
+            Powered by <a href="https://github.com/MultiChain/multichain-explorer-2">MultiChain Explorer 2</a>
         </span>
     </p>
     </div>

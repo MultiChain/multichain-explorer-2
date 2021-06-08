@@ -65,15 +65,15 @@ navbar {
 .tag-grant-per-entity             {background-color: hsl(  0, 80%, 80%);}
 .tag-revoke-per-entity            {background-color: hsl(  0, 80%, 80%);}
 
-.tag-new-asset-units              {background-color: hsl(120, 60%, 30%);}
-.tag-create-asset                 {background-color: hsl(120, 60%, 30%);}
-.tag-native-transfer              {background-color: hsl(120, 60%, 60%);}
-.tag-asset-transfer               {background-color: hsl(120, 60%, 60%);}
+.tag-issue-asset-units            {background-color: hsl(120, 60%, 30%);}
+.tag-issue-asset-details          {background-color: hsl(120, 60%, 30%);}
+.tag-transfer-native              {background-color: hsl(120, 60%, 60%);}
+.tag-transfer-asset               {background-color: hsl(120, 60%, 60%);}
 .tag-native                       {background-color: hsl(120, 60%, 60%);}
 .tag-asset                        {background-color: hsl(120, 60%, 60%);}
 .tag-multiple-assets              {background-color: hsl(120, 60%, 60%);}
-.tag-more-asset-units             {background-color: hsl(120, 60%, 30%);}
-.tag-update-asset                 {background-color: hsl(120, 60%, 30%);}
+.tag-issuemore-asset-units        {background-color: hsl(120, 60%, 30%);}
+.tag-issuemore-asset-details      {background-color: hsl(120, 60%, 30%);}
 
 
 .tag-create-stream                {background-color: hsl(230, 80%, 30%);}
@@ -91,17 +91,17 @@ navbar {
 
 .tag-pay-to-script-hash           {background-color: hsl(300, 80%, 40%);}
 .tag-not-p2pkh-p2sh               {background-color: hsl(300,100%, 70%);}
-.tag-combine                      {background-color: hsl(300,100%, 70%);}
+.tag-combine-utxos                {background-color: hsl(300,100%, 70%);}
 
 .tag-coinbase                     {background-color: hsl(  0,  0%, 80%);}
-.tag-cached-script                {background-color: hsl(  0,  0%, 30%);}
-.tag-new-license-token-unit       {background-color: hsl(  0,  0%, 30%);}
-.tag-license-transfer             {background-color: hsl(  0,  0%, 30%);}
+.tag-input-script-cache           {background-color: hsl(  0,  0%, 30%);}
+.tag-issue-license-unit           {background-color: hsl(  0,  0%, 30%);}
+.tag-transfer-license             {background-color: hsl(  0,  0%, 30%);}
 .tag-license                      {background-color: hsl(  0,  0%, 30%);}
 .tag-create-upgrade               {background-color: hsl(  0,  0%, 30%);}
 .tag-create-license               {background-color: hsl(  0,  0%, 30%);}
-.tag-filter-or-library-approval   {background-color: hsl(  0,  0%, 30%);}
-.tag-upgrade-approval             {background-color: hsl(  0,  0%, 30%);}
+.tag-approve-filter-library       {background-color: hsl(  0,  0%, 30%);}
+.tag-approve-upgrade              {background-color: hsl(  0,  0%, 30%);}
 
 .inner-table                      {margin-bottom: 0px;}
 .highlighted                      {background-color: hsl(160,  100%, 95%);}
