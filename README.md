@@ -7,8 +7,8 @@ Below are some key differences from the previous [MultiChain Explorer](https://g
 
 * Contains no local database or state — all information comes from the node's API.
 * Supports multiple blockchains simultaneously.
-* No longer reads local MultiChain files, so it can run on a different server.
-* Run on Python 3 rather than Python 2.
+* No longer reads local MultiChain files, so it can run on a remote server.
+* Runs on Python 3 rather than Python 2.
 * Requires MultiChain 2.2 beta 2 or later with the `explorersupport` runtime parameter.
 
 Requirements
