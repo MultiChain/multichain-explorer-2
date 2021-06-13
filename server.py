@@ -97,7 +97,11 @@ class MCEServer(BaseHTTPRequestHandler):
         self.end_headers()
 #        print(content[2])
         try:
-            self.wfile.write(content[2])            
+            result=content[2]
+            size=len(result)
+            bytes_written=0
+            while bytes_written<size:
+                bytes_written += self.wfile.write(result[bytes_written:])
         except IOError:
             self.handler=cfg.connerror_handler
             return None
