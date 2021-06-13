@@ -26,7 +26,20 @@ PERMISSION_TEMPLATES={
             "write"    : {"display-name":"write"},
             "read"     : {"display-name":"read"},
             "connect"  : {"display-name":"connect"},
+            "low1"     : {"display-name":"low1"},
+            "low2"     : {"display-name":"low2"},
+            "low3"     : {"display-name":"low3"},
+            "high1"    : {"display-name":"high1"},
+            "high2"    : {"display-name":"high2"},
+            "high3"    : {"display-name":"high3"},
         }       
+
+ALLOWED_PERMISSIONS_GLOBAL=["admin","activate","mine","issue","create","send","receive","low1","low2","low3","high1","high2","high3"]
+ALLOWED_PERMISSIONS_ASSET=["admin","activate","issue","send","receive"]
+ALLOWED_PERMISSIONS_STREAM=["admin","activate","write","read"]
+ALLOWED_PERMISSIONS_VARIABLE=["admin","activate","write"]
+ALLOWED_PERMISSIONS_LIBRARY=["admin","activate","write"]
+SHOW_PERMISSION_ONLY_IF_PRESENT=["low1","low2","low3","high1","high2","high3"]
         
 TAG_TO_LABEL_TEXT={
             "pay-to-script-hash" : "P2SH Address",
@@ -843,6 +856,10 @@ class MCEDataHandler():
         if entity_counts['result'] is None:
             return self.error_response(entity_counts)
         last=entity_counts['result']['addresses']
+        
+        if last is None:
+            return self.standard_response('<div class="alert alert-danger" role="alert">Explorer APIs are not enabled. To enable them, please run "multichaind -explorersupport=1 -rescan"</div>')
+
             
         self.expand_params(nparams,last,True)
         
@@ -936,6 +953,9 @@ class MCEDataHandler():
             return self.error_response(entity_counts)
         last=entity_counts['result']['transactions']
         
+        if last is None:
+            return self.standard_response('<div class="alert alert-danger" role="alert">Explorer APIs are not enabled. To enable them, please run "multichaind -explorersupport=1 -rescan"</div>')
+            
         self.expand_params(nparams,last)
         
         response=chain.request("explorerlisttransactions",[True,nparams['count'],nparams['start']])
@@ -988,8 +1008,8 @@ class MCEDataHandler():
         if response['result'] is None:
             return self.error_response(response)
             
-        allowed_permissions=["admin","activate","mine","issue","create","send","receive","connect"]
-            
+        allowed_permissions=ALLOWED_PERMISSIONS_GLOBAL.copy()
+        
         permissions={}
         for p in allowed_permissions:
             permission_def=PERMISSION_TEMPLATES[p].copy()
@@ -1044,7 +1064,7 @@ class MCEDataHandler():
         if response['result'] is None:
             return self.error_response(response)
             
-        allowed_permissions=["admin","activate","mine","issue","create","send","receive","connect"]
+        allowed_permissions=ALLOWED_PERMISSIONS_GLOBAL.copy()
             
         permissions={}
         for p in allowed_permissions:
@@ -2199,15 +2219,15 @@ class MCEDataHandler():
         if entitytype is not None:
             api_params=[entity_name + ".*"]
             if entitytype == "stream":
-                allowed_permissions=["admin","activate","write","read"]
+                allowed_permissions=ALLOWED_PERMISSIONS_STREAM.copy()
             if entitytype == "asset":
-                allowed_permissions=["admin","activate","issue","send","receive"]
+                allowed_permissions=ALLOWED_PERMISSIONS_ASSET.copy()
             if entitytype == "variable":
-                allowed_permissions=["admin","activate","write"]
+                allowed_permissions=ALLOWED_PERMISSIONS_VARIABLE.copy()
             if entitytype == "library":
-                allowed_permissions=["admin","activate","write"]
+                allowed_permissions=ALLOWED_PERMISSIONS_LIBRARY.copy()
         else:
-            allowed_permissions=["admin","activate","mine","issue","create","send","receive","connect"]
+            allowed_permissions=ALLOWED_PERMISSIONS_GLOBAL.copy()
             
         permissions={}
         for p in allowed_permissions:
@@ -2226,11 +2246,12 @@ class MCEDataHandler():
         
         body = ''
         for p in allowed_permissions:
-            body += '<h3>'+permissions[p]['display-name']+'</h3>'                
-            body += '<table class="table table-bordered table-striped table-condensed">'
-            for address in permissions[p]['addresses']:                
-                body += '<tr><td><a href="' + '/' + chain.config['path-name'] + '/address/' + address + '">' + address + '</a></td></tr>'
-            body += '</table>'
+            if (len(permissions[p]['addresses']) > 0) or (p not in SHOW_PERMISSION_ONLY_IF_PRESENT):                
+                body += '<h3>'+permissions[p]['display-name']+'</h3>'                
+                body += '<table class="table table-bordered table-striped table-condensed">'
+                for address in permissions[p]['addresses']:                
+                    body += '<tr><td><a href="' + '/' + chain.config['path-name'] + '/address/' + address + '">' + address + '</a></td></tr>'
+                body += '</table>'
             
         return self.standard_response(body)
         
@@ -2847,15 +2868,15 @@ class MCEDataHandler():
                 
             if entity_type is not None:
                 if entity_type == "stream":
-                    allowed_permissions=["admin","activate","write","read"]
+                    allowed_permissions=ALLOWED_PERMISSIONS_STREAM.copy()
                 if entity_type == "asset":
-                    allowed_permissions=["admin","activate","issue","send","receive"]
+                    allowed_permissions=ALLOWED_PERMISSIONS_ASSET.copy()
                 if entity_type == "variable":
-                    allowed_permissions=["admin","activate","write"]
+                    allowed_permissions=ALLOWED_PERMISSIONS_VARIABLE.copy()
                 if entity_type == "library":
-                    allowed_permissions=["admin","activate","write"]
+                    allowed_permissions=ALLOWED_PERMISSIONS_LIBRARY.copy()
             else:
-                allowed_permissions=["admin","activate","mine","issue","create","send","receive","connect"]
+                allowed_permissions=ALLOWED_PERMISSIONS_GLOBAL.copy()
             
             permissions=[]
             for p in allowed_permissions:
