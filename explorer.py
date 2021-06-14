@@ -11,7 +11,7 @@ import utils
 import server
 
 explorer_app = "MultiChain Explorer"
-explorer_version = "1.0"
+explorer_version = "2.0"
 
 
 def main(argv):
