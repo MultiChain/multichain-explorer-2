@@ -1,3 +1,5 @@
+
+
 # -*- coding: utf-8 -*-
 
 import cfg
@@ -303,6 +305,7 @@ def nav_bar(base_url,nparams,items_name=""):
         title=''
         body='...'
         selected=False
+        skip=False
         if this_page is not None:
             start=this_page*nparams['pagesize']
             size=nparams['pagesize']
@@ -324,6 +327,7 @@ def nav_bar(base_url,nparams,items_name=""):
                 has_link=True
                 start=None
                 title='First page ' + min_max_title
+                skip=True
             elif count == 1:
                 body=NAV_SYMBOL_PREV#'&lt;'
                 if (this_page >= 0) and (this_page < nparams['totalpages']):
@@ -338,6 +342,7 @@ def nav_bar(base_url,nparams,items_name=""):
                 body=NAV_SYMBOL_LAST#'&raquo;'
                 has_link=True
                 title='Last page ' + min_max_title
+                skip=True
             elif this_page == nparams['thispage']:
                 body=str(this_page+1)
                 top_item=start
@@ -353,14 +358,18 @@ def nav_bar(base_url,nparams,items_name=""):
                     body=str(nparams['totalpages']-this_page)
                 has_link=True
                 title='Go to page '+ body + ' ' + min_max_title
-        if has_link:
+        if skip:
+            bar+=''
+        elif has_link:
             link=base_url + '?size=' + str(nparams['pagesize']) 
             if start is not None:
                 link += '&from=' + str(start)            
-            bar+='<a href="' + link + '" title="' + title + '">'+body+'</a>&nbsp;'
+            bar+='<a class="navbar-link" href="' + link + '" title="' + title + '">'+body+'</a>&nbsp;'
         else:
             if selected:
-                bar+='<a class="navbar-disabled navbar-selected" title="' + title + '">'+body+'</a>&nbsp;'
+                bar+='<a class="navbar-selected" title="' + title + '">'+body+'</a>&nbsp;'
+            elif body=='...':
+                bar+='<a class="navbar-ellipsis" title="' + title + '">'+body+'</a>&nbsp;'
             else:
                 bar+='<a class="navbar-disabled" title="' + title + '">'+body+'</a>&nbsp;'
             
@@ -375,10 +384,10 @@ def nav_bar(base_url,nparams,items_name=""):
         title=str(ct) + ' ' + items_name + ' per page'
         body=str(ct)
         if ct == nparams['pagesize']:
-            bar+='<a class="navbar-disabled navbar-selected" title="' + str(ct) + " " + items_name + ' per page">'+str(ct)+'</a>&nbsp;'
+            bar+='<a class="navbar-selected" href="' + link + '" title="' + str(ct) + " " + items_name + ' per page">'+str(ct)+'</a>&nbsp;'
         else:
             link=base_url + '?size=' + str(ct) + '&from=' + str(top_item)
-            bar+='<a href="' + link + '" title="' + title + '">'+body+'</a>&nbsp;'
+            bar+='<a class="navbar-link" href="' + link + '" title="' + title + '">'+body+'</a>&nbsp;'
     bar+='</span>'
     bar+='</div>'
         

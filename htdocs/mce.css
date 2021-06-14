@@ -38,24 +38,37 @@ navbar {
    text-align:center;
 }
 
-.navbar::before {
-/*   content: "Page: ";*/
+.navbar a {
+   padding:5px 10px;
+}
+
+.navbar a:hover {
+   text-decoration:none;
+}
+
+
+a.navbar-link,a.navbar-selected
+{
+   background:#ddd;
+}
+
+a.navbar-link:hover,a.navbar-selected:hover {
+   background:#bbb;
 }
 
 .navbar-selected
 {
    font-weight: bold;
+   cursor: pointer;
 }
 
-.navbar a,.navbar-selected {
-   padding:5px 10px;
-   background:#ddd;
-   margin:0 1px;
+a.navbar-disabled {
+   opacity:0.5;
 }
 
-.navbar a:hover {
-   background:#bbb;
-   text-decoration:none;
+a.navbar-ellipsis {
+   padding-left:0;
+   padding-right:0;
 }
 
 .tag-grant-high                   {background-color: hsl(  0,100%, 40%);}
