@@ -384,8 +384,8 @@ def nav_bar(base_url,nparams,items_name=""):
         title=str(ct) + ' ' + items_name + ' per page'
         body=str(ct)
         if ct == nparams['pagesize']:
-            bar+='<a class="navbar-selected" href="' + link + '" title="' + str(ct) + " " + items_name + ' per page">'+str(ct)+'</a>&nbsp;'
-        else:
+            bar+='<a class="navbar-selected"' + '" title="' + str(ct) + " " + items_name + ' per page">'+str(ct)+'</a>&nbsp;'
+        else:            
             link=base_url + '?size=' + str(ct) + '&from=' + str(top_item)
             bar+='<a class="navbar-link" href="' + link + '" title="' + title + '">'+body+'</a>&nbsp;'
     bar+='</span>'
