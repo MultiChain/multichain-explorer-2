@@ -1,6 +1,6 @@
-
-
 # -*- coding: utf-8 -*-
+
+# MultiChain Explorer (c) Coin Sciences Ltd
 
 import cfg
 from urllib import parse
@@ -102,25 +102,9 @@ TAG_REMOVE_IF_OTHER_PRESENT={"grant-low":"grant-high",
                              "transfer-asset":"multiple-assets",
                              "issue-license-unit":"create-license"}
 
-def decode_script(script):
-    
-    tokens=[]
-    for t in script.split(' '):
-        if (len(t) > 3) and (t[0:3] == 'OP_'):
-            tokens.append(t[3:])
-        else:
-            if (len(t) % 2) != 0:
-                tokens.append(t)
-            else:                 
-                token=str(len(t) // 2) + ':'
-                if len(t)<= 8:
-                    token += t
-                else:
-                    token += t[0:4] + '...' + t[-4:]
-                tokens.append(token)
-    
-    return ' '.join(tokens)
 
+
+# ABE utils
 def html_keyvalue_tablerow(key, value):    
     return '<tr><td>' + key + '</td><td>' + str(value) + '</td></tr>'
 
@@ -128,19 +112,6 @@ def html_keyvalue_tablerow_wrap(minwidth, maxwidth, key, value):
     td='<td style="word-wrap: break-word;min-width: '+str(minwidth)+'px;max-width: '+str(maxwidth)+'px;white-space:normal;">'
     return '<tr>'+ td + str(key) + '</td>'+ td + str(value) + '</td></tr>'
 
-def format_time(nTime):
-    import time
-    return time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(int(nTime)))
-
-def signed_amount_html(amount):
-    if amount<0:
-        return str(amount)
-    if amount>0:
-        return '+' + str(amount)
-    return '0'
-        
-
-# ABE utils
 def render_long_data_with_popover(data, limit=40, classes="", hover=True):
     """
     Render a string, potentially truncating and enabling a popover with the full data triggered by clicking
@@ -167,100 +138,43 @@ def render_long_data_with_popover(data, limit=40, classes="", hover=True):
         tabindex = None if hover else ' tabindex="0"'
         data_html = '{}<span id="ppp" class="ellipses" data-toggle="popover" data-trigger="{}"{} data-content=" {} ">...</span>'.format(
             data_html, trigger, tabindex, escape(data, quote=True))
-#        print(data_html)
 
     if classes:
         data_html = '<span class="{}">{}</span>'.format(classes, data_html)
     return data_html
 
 
-def render_long_data_with_link(data, data_ref, limit=40, classes=""):
-    """
-    Render a hex string, potentially truncating and enabling a link to the full data by clicking
-    on the ellipses at the end of the value.
 
-    If @p classes are given, wrap the value in a span.
 
-    :param data:     The hex string to render.
-    :param data_ref: The link to the full data.
-    :param limit:    The length at which to truncate the data.
-    :param classes:  Additional CSS classes for the returned tag.
-    :return:         The HTML to render for the data.
-    """
-    data_html = escape(data[:limit], quote=True)
-    if len(data) > limit:
-        data_html = '{}:{} <a class="ellipses" title="Click to show all data" href="{}">...</a>'.format(
-            len(data) / 2, data_html, data_ref)
-    if classes:
-        data_html = '<span class="{}">{}</span>'.format(classes, data_html)
-    print(data_html)
-    return data_html
-            
-def nav_bar1(base_url,count,last,is_last,min_start):
-    bar=''
-    page=(last-min_start) // count
+def decode_script(script):
     
-    if page==0:
-        bar+='&lt;&lt;&nbsp;'
-        bar+='&lt;&nbsp;'
-    else:
-        bar+='<a href="'+ base_url + '?count=' + str(count) + '&start=' + str(min_start) + '">&lt;&lt;</a>&nbsp;'
-        bar+='<a href="'+ base_url + '?count=' + str(count) + '&start=' + str((page-1) * count + min_start) + '">&lt;</a>&nbsp;'
-    if is_last:
-        bar+='&gt;&nbsp;'
-    else:
-        bar+='<a href="'+ base_url + '?count=' + str(count) + '&start=' + str((page+1) * count + min_start) + '">&gt;</a>&nbsp;'
-    bar+='<a href="'+ base_url + '?count=' + str(count) + '">&gt;&gt;</a>&nbsp;'
-    
-    for ct in DEFAULT_COUNTS:
-        page=(last-min_start) // ct
-        if is_last:
-            bar+='<a href="'+ base_url + '?count=' + str(ct) + '">' + str(ct) + '</a>&nbsp;'
+    tokens=[]
+    for t in script.split(' '):
+        if (len(t) > 3) and (t[0:3] == 'OP_'):
+            tokens.append(t[3:])
         else:
-            bar+='<a href="'+ base_url + '?count=' + str(ct) + '&start=' + str(page * count + min_start) + '">' + str(ct) + '</a>&nbsp;'
-        
-        
-    return bar
+            if (len(t) % 2) != 0:
+                tokens.append(t)
+            else:                 
+                token=str(len(t) // 2) + ':'
+                if len(t)<= 8:
+                    token += t
+                else:
+                    token += t[0:4] + '...' + t[-4:]
+                tokens.append(token)
+    
+    return ' '.join(tokens)
 
-def last_page_start(page_size,list_size,min_start):
-    page=(list_size-1) // page_size
-    if page>0:
-        page=page-1
-        return page * page_size + min_start
-    return 0
+def format_time(nTime):
+    import time
+    return time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(int(nTime)))
 
-def nav_bar_with_known_last(base_url,count,start,last,is_last,min_start):
-    
-    if last < 0:
-        return nav_bar1(base_url,count,last,is_last,min_start)
-        
-    bar=''
-    page=(start-min_start) // count
-    if is_last:
-        page=(last-1) // count
-        
-    
-    if page==0:
-        bar+='&lt;&lt;&nbsp;'
-        bar+='&lt;&nbsp;'
-    else:
-        bar+='<a href="'+ base_url + '?count=' + str(count) + '&start=' + str(min_start) + '">&lt;&lt;</a>&nbsp;'
-        bar+='<a href="'+ base_url + '?count=' + str(count) + '&start=' + str((page-1) * count + min_start) + '">&lt;</a>&nbsp;'
-    if is_last:
-        bar+='&gt;&nbsp;'
-    else:
-        bar+='<a href="'+ base_url + '?count=' + str(count) + '&start=' + str((page+1) * count + min_start) + '">&gt;</a>&nbsp;'
-    bar+='<a href="'+ base_url + '?count=' + str(count) + '">&gt;&gt;</a>&nbsp;'
-    
-    for ct in DEFAULT_COUNTS:
-        page=(last-min_start) // ct
-        if is_last:
-            bar+='<a href="'+ base_url + '?count=' + str(ct) + '">' + str(ct) + '</a>&nbsp;'
-        else:
-            bar+='<a href="'+ base_url + '?count=' + str(ct) + '&start=' + str(page * count + min_start) + '">' + str(ct) + '</a>&nbsp;'
-        
-        
-    return bar
+def signed_amount_html(amount):
+    if amount<0:
+        return str(amount)
+    if amount>0:
+        return '+' + str(amount)
+    return '0'        
     
 def range_title(start,size,min_start,items_name):
     return "(" + items_name + str(start + size - 1 + min_start)+ '...'+str(start + min_start) + ")"
@@ -389,92 +303,6 @@ def nav_bar(base_url,nparams,items_name=""):
             link=base_url + '?size=' + str(ct) + '&from=' + str(top_item)
             bar+='<a class="navbar-link" href="' + link + '" title="' + title + '">'+body+'</a>&nbsp;'
     bar+='</span>'
-    bar+='</div>'
-        
-    return bar
-    
-def nav_bar2(base_url,nparams,items_name=""):
-    
-    bar='<div class="navbar">'
-    
-    if nparams['listsize'] == 0:
-        bar+='<span class="navbar-selected"">No '+items_name+' found in this list</span>&nbsp;'
-        bar+='</div>'            
-        return bar
-#    last_page_title=str((nparams['totalpages']-1)*nparams['pagesize']+nparams['minstart']) + ' - ' + str(nparams['listsize']-1 + nparams['minstart'])
-    last_page_title="(" + items_name + str(nparams['listsize']-1 + nparams['minstart']) + "..." + str((nparams['totalpages']-1)*nparams['pagesize']+nparams['minstart']) + ')'
-    last_page_link=base_url + '?size=' + str(nparams['pagesize'])
-    bar+='<a href="' + last_page_link + '" title="First page '  + last_page_title + '">&laquo;</a>&nbsp;'
-    
-    if nparams['thispage'] < nparams['totalpages'] - 1:
-        if nparams['thispage'] < nparams['totalpages'] - 2:
-            page_title=range_title(nparams['start']+nparams['pagesize'],nparams['pagesize'],nparams['minstart'],items_name)
-            page_link=base_url + '?size=' + str(nparams['pagesize']) + '&from=' + str(nparams['start']+nparams['pagesize'])
-            bar+='<a href="' + page_link + '" title="Previous page ' + page_title + '">&lt;</a>&nbsp;'
-        else:
-            bar+='<a href="' + last_page_link + '" title="Previous page ' + last_page_title + '">&lt;</a>&nbsp;'
-    else:
-        bar+='&lt;&nbsp;'
-        
-# Newest page    
-    if nparams['thispage'] < nparams['totalpages'] - 1:
-        page=str(1)
-        bar+='<a href="' + last_page_link + '" title="Go to page ' + page +' ' + last_page_title + '">'+page+'</a>&nbsp;'
-     
-# Prev page
-     
-    if nparams['thispage'] < nparams['totalpages'] - 2:
-        page_title=range_title(nparams['start']+nparams['pagesize'],nparams['pagesize'],nparams['minstart'],items_name)
-        page_link=base_url + '?size=' + str(nparams['pagesize']) + '&from=' + str(nparams['start']+nparams['pagesize'])
-        
-        if nparams['thispage'] < nparams['totalpages'] - 3:
-            bar+='... '
-        page = str(nparams['totalpages']-nparams['thispage'] - 1)
-        bar+='<a href="' + page_link + '" title="Go to page ' + page + ' ' + page_title + '">'+page+'</a>&nbsp;'
-# This page
-
-    page_title=range_title(nparams['start'],nparams['count'],nparams['minstart'],items_name)
-    page=str(nparams['totalpages']-nparams['thispage'])
-    bar+='<span class="navbar-selected" title="Page ' + page + ' ' + page_title + '">'+page+'</span>&nbsp;'
-
-# Next page
-     
-    if nparams['thispage'] > 1:
-        page_title=range_title(nparams['start']-nparams['pagesize'],nparams['pagesize'],nparams['minstart'],items_name)
-        page_link=base_url + '?size=' + str(nparams['pagesize']) + '&from=' + str(nparams['start']-nparams['pagesize'])
-        page=str(nparams['totalpages']-nparams['thispage'] + 1 )
-        bar+='<a href="' + page_link + '" title="Go to page ' + page +' ' + page_title + '">'+page+'</a>&nbsp;'
-        if nparams['thispage'] > 2:
-            bar+='... '
-            
-    first_page_title=range_title(0,nparams['pagesize'],nparams['minstart'],items_name)
-    if nparams['totalpages'] == 1: 
-        first_page_title=last_page_title
-    first_page_link=base_url + '?size=' + str(nparams['pagesize']) + '&from=' + str(0)
-        
-    if nparams['thispage'] > 0:
-        page=str(nparams['totalpages'])
-        bar+='<a href="' + first_page_link + '" title="Go to page ' + page +' ' + first_page_title + '">'+page+'</a>&nbsp;'
-        
-    if nparams['thispage'] > 1:
-        bar+='<a href="' + page_link + '" title="Next page ' + page_title + '">&gt;</a>&nbsp;'
-    else:
-        if nparams['thispage'] > 0:
-            bar+='<a href="' + first_page_link + '" title="Next page ' + first_page_title + '">&gt;</a>&nbsp;'
-        else:
-            bar+='&gt;&nbsp;'
-        
-# Oldest page    
-    bar+='<a href="' + first_page_link + '" title="Last page ' + first_page_title + '">&raquo;</a>&nbsp;'
-    bar+='&nbsp;&nbsp;'
-                
-    for ct in DEFAULT_COUNTS:
-        if ct == nparams['pagesize']:
-            bar+='<span class="navbar-selected" title="' + str(ct) + " " + items_name + ' per page">'+str(ct)+'</span>&nbsp;'
-        else:
-            page_link=base_url + '?size=' + str(ct) + '&from=' + str(nparams['start'])
-            bar+='<a href="' + page_link + '" title="' + str(ct) + " " + items_name + ' per page">'+str(ct)+'</a>&nbsp;'
-                    
     bar+='</div>'
         
     return bar
@@ -713,8 +541,6 @@ class MCEDataHandler():
         if list_size<=0:
             return
             
-#        print(nparams)
-        
         nparams['nav']=True
         if 'onlylast' in nparams:
             if int(nparams['onlylast']) > 0:
@@ -760,62 +586,6 @@ class MCEDataHandler():
         else:
             nparams['start']=-nparams['count']
                         
-#        print(nparams)
-
-    def expand_params1(self,nparams,list_size=-1,min_start=1):
-#        print(nparams)
-        
-        nparams['nav']=True
-        nparams['islast']=False
-        if 'onlylast' in nparams:
-            if int(nparams['onlylast']) > 0:
-                nparams['nav']=False
-                if 'count' not in nparams:
-                    nparams['count']=DEFAULT_NONAV_COUNT 
-                else:
-                    nparams['count']=int(nparams['count'])
-        else:
-            if ('size' not in nparams) or (int(nparams['size']) <= 0):
-                nparams['count']=DEFAULT_COUNTS[0]     
-            else:
-                nparams['count']=int(nparams['size'])
-                
-                
-        nparams['pagesize']=nparams['count']      
-        nparams['listsize']=list_size
-        nparams['minstart']=min_start
-        nparams['totalpages']=list_size // nparams['pagesize']
-        if nparams['totalpages'] <=0:
-            nparams['totalpages']=1
-        
-        if nparams['nav']:        
-            if list_size > 0:
-                if 'from' not in nparams:
-                    nparams['start']=-nparams['count']
-                    if list_size>=0:
-                        nparams['start']=last_page_start(nparams['count'],list_size,0)
-                        nparams['count']=list_size-nparams['start']+0
-                    nparams['islast']=True
-                    nparams['thispage']=(nparams['start']-0) // nparams['pagesize']               
-                    nparams['start']=nparams['thispage']*nparams['pagesize'] + 0
-                else:
-                    nparams['start']=int(nparams['from'])            
-                    nparams['thispage']=(nparams['start']-0) // nparams['pagesize']               
-                    if nparams['thispage'] >= nparams['totalpages'] - 1:
-                        nparams['start']=last_page_start(nparams['count'],list_size,0)
-                        nparams['count']=list_size-nparams['start']+0
-                        nparams['islast']=True
-                        nparams['thispage']=nparams['totalpages'] - 1            
-                    nparams['start']=nparams['thispage']*nparams['pagesize'] + 0
-            else:
-                nparams['islast']=True
-                nparams['thispage']=0
-                nparams['start']=0
-        else:
-            nparams['start']=-nparams['count']
-                        
-#        print(nparams)
-        
     def handle_blocks(self,chain,params,nparams):
         if chain is None:        
             return self.standard_response('')
@@ -988,7 +758,6 @@ class MCEDataHandler():
         for tx in reversed(response['result']):
             label_html=tags_to_label_html(tx['tags'])
             body += '<tr>'
-#            body += '<td><a href="/' + chain.config['path-name'] + '/transaction/' + tx['txid'] + '">' + tx['txid'] + '</a>' +  label_html + '</td>'                        
             body += '<td><a href="/' + chain.config['path-name'] + '/transaction/' + tx['txid'] + '">' + tx['txid'] + '</a>'  + '</td>'                        
             body += '<td>' +  label_html + '</td>'                        
             if tx['blockheight'] is not None:                
@@ -1193,7 +962,6 @@ class MCEDataHandler():
         for tx in reversed(response['result']):
             label_html=tags_to_label_html(tx['tags'])
             body += '<tr>'
-#            body += '<td><a href="/' + chain.config['path-name'] + '/transaction/' + tx['txid'] + '">' + tx['txid'] + '</a>' +  label_html + '</td>'                        
             body += '<td><a href="/' + chain.config['path-name'] + '/transaction/' + tx['txid'] + '">' + tx['txid'] + '</a>'  + '</td>'                        
             body += '<td>' +  label_html + '</td>'                        
             if tx['blockheight'] is not None:                
@@ -1242,7 +1010,6 @@ class MCEDataHandler():
         for tx in response['result']:
             label_html=tags_to_label_html(tx['tags'])
             body += '<tr>'
-#            body += '<td><a href="/' + chain.config['path-name'] + '/transaction/' + tx['txid'] + '">' + tx['txid'] + '</a>' +  label_html + '</td>'                        
             body += '<td><a href="/' + chain.config['path-name'] + '/transaction/' + tx['txid'] + '">' + tx['txid'] + '</a>'  + '</td>'                        
             body += '<td>' +  label_html + '</td>'                        
             body += '</tr>'
@@ -1304,14 +1071,6 @@ class MCEDataHandler():
             
             body += '<td>'+asset_link+'</td>'    
             
-#            if ('name' in asset) and (asset['name'] is not None) and (len(asset['name']) > 0):                
-#                entity_quoted=parse.quote_plus(asset['name'])
-#                body += '<td><a href="/' + chain.config['path-name'] + '/asset/' + entity_quoted + '">' + asset['name'] + '</a></td>'    
-#            else:  
-#                if ('name' in asset) and (asset['name'] is None):
-#                    body += '<td>Native Currency</td>'    
-#                else:
-#                    body += '<td><a href="/' + chain.config['path-name'] + '/asset/' + entity_quoted + '">No name</a></td>'    
             if entity_quoted is None:
                entity_quoted=DEFAULT_NATIVE_CURRENCY_ID 
                
@@ -1519,9 +1278,7 @@ class MCEDataHandler():
         
         body += '<table class="table table-bordered table-striped table-condensed">'
             
-#        id_name = info['issuetxid']                 
         if 'name' in info:
-#            id_name=info['name']
             body += '<tr><td>Name</td><td>'+info['name']+'</td></tr>'        
         body += '<tr><td>First Transaction</td><td><a href="/' + chain.config['path-name'] + '/transaction/' + info['issuetxid'] + '">' + info['issuetxid']+ '</a></td></tr>'        
         if ('assetref' in info) and (info['assetref'] is not None):
@@ -1562,11 +1319,8 @@ class MCEDataHandler():
         
         if self.display_local:            
             if info['subscribed']:
-#                body += '<tr><td>Subscribed</td><td><span class="label label-success">Yes</span></td></tr>'        
                 body += '<tr><td>Transactions</td><td><a href="/' + chain.config['path-name'] + '/assettransactions/' + entity_quoted + '">' + str(info['transactions']) + '</a></td>'
                 body += '<tr><td>Confirmed</td><td>' + str(info['confirmed']) + '</td>'
-#            else:
-#                body += '<tr><td>Subscribed</td><td><span class="label label-warning">No</span></td></tr>'        
             
         address_count=chain.request("explorerlistassetaddresses",[entity_name,"-"])
         if address_count['result'] is not None:
@@ -2120,27 +1874,6 @@ class MCEDataHandler():
                 vout = item['vout']
                 
                 data_html=self.general_data_html(chain,data,txid,vout)
-#                printdata = False
-#                mydata = None
-#                if (type(data) is OrderedDict) or (type(data) is dict):
-#                    if 'text' in data:
-#                        mydata = data['text']
-#                        printdata = True
-#                    elif 'json' in data:
-#                        mydata = json.dumps(data['json'],indent=4)
-#                        printdata = True
-#                    else:
-#                        mydata = 'Too large to show'
-#                        vout = data['vout']
-#                else:
-#                    mydata = data
-#                    printdata = True
-#                data_ref = '/' + chain.config['path-name'] + '/txoutdata-data/' + txid + '/' + str(vout)
-#    
-#                if printdata:
-#                    data_html = render_long_data_with_popover(mydata)
-#                else:
-#                    data_html = '<a href="' + data_ref + '" title="Click to show all data">Too large to show</a>'
             else:
                 data_html="Not available"
             
@@ -2361,7 +2094,6 @@ class MCEDataHandler():
         body += '<tr><td>Transaction Merkle Root</td><td>' + str(response['result']['merkleroot']) +  '</td></tr>'
         body += '<tr><td>Time</td><td>' + format_time(response['result']['time']) +  '</td></tr>'
         body += '<tr><td>Nonce</td><td>' + str(response['result']['nonce']) +  '</td></tr>'
-#        body += '<tr><td>Transactions</td><td>' + str(len(response['result']['tx'])) +  '</td></tr>'
         body += '<tr><td>Transactions</td><td><a href="/' + chain.config['path-name'] + '/blocktransactions/'+params[0]+'">' + str(len(response['result']['tx'])) +  '</a></td></tr>'
         body += '</table>'
         
@@ -2617,7 +2349,6 @@ class MCEDataHandler():
         if len(vout['assets']) == 0:
             return ''
             
-#        result='<table class="table table-bordered table-condensed">'
         result='<div style="height:5px;"></div><div class="panel panel-default panel-success"><div class="panel-body" style="">'
         first_row=True
         
@@ -2642,7 +2373,6 @@ class MCEDataHandler():
                     if asset['qty'] == 1:
                         units='unit'
                     if 'type' in asset:
-        #                result+='<tr><td>'
                         if asset['type'] == "issuefirst":
                             result+="Issue " + str(asset['qty']) + " " + units + " of new asset " + asset_link
                         elif asset['type'] == "issuemore":
@@ -2658,15 +2388,12 @@ class MCEDataHandler():
                             result+=str(asset['qty']) + " " + units + " of " + asset_link
                     
                 
-#                result+='</td></tr>'
         
         result+='</div></div>'
-#        result+='</table>'
         return result                        
         
         
     def vout_assetmetadata(self,chain,info,txid):
-#        result='<div style="height:5px;"></div><div class="panel panel-default panel-success"><div class="panel-body" style="">'
         entity_quoted=txid 
         if 'issuetxid' in info:
             entity_quoted=info['issuetxid'] 
@@ -2701,12 +2428,9 @@ class MCEDataHandler():
         result += '<tr><td>Details</td><td>'+str(details)+'</td></tr>'        
         
         result+='</table>'
-#        result+="Metadata for asset " + entity_link
-#        result+='</div></div>'
         return result                                
         
     def vout_variablemetadata(self,chain,info,txid):
-#        result='<div style="height:5px;"></div><div class="panel panel-default panel-success"><div class="panel-body" style="">'
         entity_quoted=txid 
         if 'createtxid' in info:
             entity_quoted=info['createtxid'] 
@@ -2717,7 +2441,6 @@ class MCEDataHandler():
         else:
             entity_name="Variable with txid " + entity_quoted
                         
-#        entity_link='<a href="/' + chain.config['path-name'] + '/asset/' + entity_quoted + '">' + entity_name + '</a>'
         entity_link=entity_name
             
         result='<table class="table table-bordered table-condensed inner-table">'
@@ -2726,12 +2449,9 @@ class MCEDataHandler():
         result += '<tr><td>Value</td><td>'+str(value)+'</td></tr>'        
         
         result+='</table>'
-#        result+="Metadata for asset " + entity_link
-#        result+='</div></div>'
         return result                                
         
     def vout_streammetadata(self,chain,info,txid):
-#        result='<div style="height:5px;"></div><div class="panel panel-default panel-success"><div class="panel-body" style="">'
         entity_quoted=txid 
         if 'createtxid' in info:
             entity_quoted=info['issuetxid'] 
@@ -2763,7 +2483,6 @@ class MCEDataHandler():
         result += '<tr><td>Details</td><td>'+str(details)+'</td></tr>'        
         
         result+='</table>'
-#        result+='</div></div>'
         return result                                
         
         
@@ -2808,37 +2527,14 @@ class MCEDataHandler():
         if not item['offchain']:
             data = item['data']
             data_html=self.general_data_html(chain,data,txid,index)
-#            printdata = False
-#            mydata = None
-#            if (type(data) is OrderedDict) or (type(data) is dict):
-#                if 'text' in data:
-#                    mydata = data['text']
-#                    printdata = True
-#                elif 'json' in data:
-#                    mydata = json.dumps(data['json'],indent=4)
-#                    printdata = True
-#                else:
-#                    mydata = 'Too large to show'
-#                    vout = data['vout']
-#            else:
-#                mydata = data
-#                printdata = True
-    
-#            if printdata:
-#                data_html = render_long_data_with_popover(mydata)
-#            else:
-#    #                    data_html = render_long_data_with_link(mydata, data_ref, limit=20)                
-#                data_html = '<a href="' + data_ref + '" title="Click to show all data">Too large to show</a>'
         else:
             data_html = '<a href="' + data_ref + '" title="Click to show all data">Offchain data</a>'
             
-#        result='<div style="height:5px;"></div><div class="panel panel-default panel-success"><div class="panel-body" style="">'
         result='<table class="table table-bordered table-condensed">'
         result+='<tr><td>Stream</td><td>' + entity_link + '</td></tr>'
         result+='<tr><td>Keys</td><td>' + keyshtml + '</td></tr>'
         result+='<tr><td>Data</td><td>' + data_html + '</td></tr>'
         result+='</table>'
-#        result+='</div></div>'
         return result                                
         
     def vout_permissions(self,chain,vout):
@@ -2916,7 +2612,6 @@ class MCEDataHandler():
         for d in info['data']:
             htmls.append(self.general_data_html(chain,d,txid,vout))
         result+='<br/>'.join(htmls)
-#        result+=self.general_data_html(chain,info['data'],txid,vout)
         result+='</div></div>'
         
         return result                                
@@ -2947,7 +2642,6 @@ class MCEDataHandler():
         if printdata:
             result = render_long_data_with_popover(mydata)
         else:
-#                    data_html = render_long_data_with_link(mydata, data_ref, limit=20)                
             result = '<a href="' + data_ref + '" title="Click to show all data">Too large to show</a>'
         
         return result

@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 
+# MultiChain Explorer (c) Coin Sciences Ltd
+
 import cfg
 import utils
 import readconf

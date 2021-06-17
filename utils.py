@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# MultiChain Feed Adapter (c) Coin Sciences Ltd
-# All rights reserved under BSD 3-clause license
+# MultiChain Explorer (c) Coin Sciences Ltd
 
 
 import sys

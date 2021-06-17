@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 
+# MultiChain Explorer (c) Coin Sciences Ltd
+
 from urllib import parse
 
 DEFAULT_REFRESH=5000

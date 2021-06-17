@@ -1,8 +1,9 @@
 # -*- coding: utf-8 -*-
 
+# MultiChain Explorer (c) Coin Sciences Ltd
+
 from http.server import BaseHTTPRequestHandler, HTTPServer
 
-import time
 import cfg
 import pages
 import data
