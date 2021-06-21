@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
-# MultiChain Explorer (c) Coin Sciences Ltd
+# MultiChain Explorer 2 (c) Coin Sciences Ltd
+# All rights reserved under BSD 3-clause license
 
 
 import sys
