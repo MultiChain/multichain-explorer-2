@@ -17,6 +17,7 @@ DEFAULT_NONAV_COUNT=5
 DEFAULT_PAGE_SHIFT=3
 DEFAULT_NATIVE_CURRENCY_ID='0-0-0'
 DEFAULT_COUNTS=[20,50,100,200,500]
+MAX_SHOWN_DATA=40
 PERMISSION_TEMPLATES={
             "admin"    : {"display-name":"admin"},
             "activate" : {"display-name":"activate"},
@@ -101,50 +102,6 @@ TAG_REMOVE_IF_OTHER_PRESENT={"grant-low":"grant-high",
                              "issuemore-asset-details":"issuemore-asset-units",
                              "transfer-asset":"multiple-assets",
                              "issue-license-unit":"create-license"}
-
-
-
-# ABE utils
-def html_keyvalue_tablerow(key, value):    
-    return '<tr><td>' + key + '</td><td>' + str(value) + '</td></tr>'
-
-def html_keyvalue_tablerow_wrap(minwidth, maxwidth, key, value):
-    td='<td style="word-wrap: break-word;min-width: '+str(minwidth)+'px;max-width: '+str(maxwidth)+'px;white-space:normal;">'
-    return '<tr>'+ td + str(key) + '</td>'+ td + str(value) + '</td></tr>'
-
-def render_long_data_with_popover(data, limit=40, classes="", hover=True):
-    """
-    Render a string, potentially truncating and enabling a popover with the full data triggered by clicking
-    on the ellipses at the end of the value.
-
-    If @p classes are given, wrap the value in a span.
-
-    :param data:    The string to render.
-    :param limit:   The length at which to truncate the data.
-    :param classes: Additional CSS classes for the returned tag.
-    :param hover:   Popover activated by hover or click.
-    :return:        The HTML to render for the data.
-    """
-    data_html = data
-    
-    if data_html.startswith("<pre>"):
-        data_html = data_html[5:]
-    if data_html.endswith("</pre>"):
-        data_html = data_html[:-6]
-    data_len = len(data_html)
-    data_html = escape(data_html[:limit], quote=True)
-    if data_len > limit:
-        trigger = "hover" if hover else "focus"
-        tabindex = None if hover else ' tabindex="0"'
-        data_html = '{}<span id="ppp" class="ellipses" data-toggle="popover" data-trigger="{}"{} data-content=" {} ">...</span>'.format(
-            data_html, trigger, tabindex, escape(data, quote=True))
-
-    if classes:
-        data_html = '<span class="{}">{}</span>'.format(classes, data_html)
-    return data_html
-
-
-
 
 def decode_script(script):
     
@@ -507,12 +464,11 @@ class MCEDataHandler():
         
         body += '<h3>General Information</h3>'
         body += '<table class="table table-bordered table-striped table-condensed">'
-        for k,v in sorted(response['result'].items()):
-            if k in ('relayfee'):
-                #v = '%.8g' % v # doesn't work?
-                v = ('%.20f' % v).rstrip('0')  # so instead we force the number of decimal places and strip zeros
-            if k != 'rewards':
-                body += html_keyvalue_tablerow(k, v)
+        for key,value in sorted(response['result'].items()):
+            if key in ('relayfee'):
+                value = ('%.20f' % value).rstrip('0') 
+            if key != 'rewards':
+                body +=  '<tr><td>' + key + '</td><td>' + str(value) + '</td></tr>'
             
         body += '</table>'
 
@@ -529,8 +485,9 @@ class MCEDataHandler():
             
         body = '<h3>Blockchain Parameters</h3>'
         body += '<table class="table table-bordered table-striped table-condensed">'
-        for k,v in sorted(response['result'].items()):
-            body += html_keyvalue_tablerow_wrap(50, 300, k, v)
+        td='<td style="word-wrap: break-word;min-width: 50px;max-width: 300px;white-space:normal;">'
+        for key,value in sorted(response['result'].items()):
+            body += '<tr>'+ td + str(key) + '</td>'+ td + str(value) + '</td></tr>'
             
         body += '</table>'
         
@@ -2640,7 +2597,14 @@ class MCEDataHandler():
             
 
         if printdata:
-            result = render_long_data_with_popover(mydata)
+            
+            result = mydata
+            
+            size = len(result)
+            result = escape(result[:MAX_SHOWN_DATA], quote=True)
+            if size > MAX_SHOWN_DATA:
+                result += '<span class="ellipses" data-toggle="popover" data-trigger="hover" data-content=" '+escape(mydata, quote=True)+' ">...</span>'        
+             
         else:
             result = '<a href="' + data_ref + '" title="Click to show all data">Too large to show</a>'
         
