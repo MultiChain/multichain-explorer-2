@@ -7,7 +7,8 @@ import cfg
 from urllib import parse
 import json
 from collections import OrderedDict
-from cgi import escape
+#from cgi import escape
+from html import escape
 
 NAV_SYMBOL_FIRST='&laquo;'
 NAV_SYMBOL_PREV='&lt;'
@@ -19,6 +20,7 @@ DEFAULT_PAGE_SHIFT=3
 DEFAULT_NATIVE_CURRENCY_ID='0-0-0'
 DEFAULT_COUNTS=[20,50,100,200,500]
 MAX_SHOWN_DATA=40
+MAX_DEFAULT_QTY=9223372036854775807
 PERMISSION_TEMPLATES={
             "admin"    : {"display-name":"admin"},
             "activate" : {"display-name":"activate"},
@@ -75,6 +77,7 @@ TAG_TO_LABEL_TEXT={
             "create-variable" : "Create Variable",
             "create-library" : "Create Library",
             "issuemore-asset-details" : "Issue Asset Follow-On (Metadata)",
+            "update-asset" : "Update Asset",
             "update-variable" : "Update Variable",
             "update-library" : "Update Library",
             "approve-filter-library" : "Approve Filter Or Library",
@@ -1162,6 +1165,7 @@ class MCEDataHandler():
         body += '''
             <th>Units</th>
             <th>Open</th>
+            <th>Fungible</th>
             '''
         if show_issuer:
             body += '<th>Issuer</th>'
@@ -1197,13 +1201,45 @@ class MCEDataHandler():
                 else:
                     body += '<td>Not subscribed</td>'
                 
-            body += '<td>'+str(asset['issueqty'])+'</td>'
+            qty_str=str(asset['issueqty'])
+            limits=[]
+            if ("totallimit" in asset) and (asset['totallimit'] is not None):
+                limits.append("limit " + str(asset['totallimit']))
+            if ("issuelimit" in asset) and (asset['issuelimit'] is not None):
+                limits.append("max " + str(asset['issuelimit']) + " per issue")
+            if len(limits) > 0:
+                qty_str += ' (' + ', '.join(limits) + ')'
+                
+            body += '<td>'+qty_str+'</td>'
             if max_count>0:
                 body += '<td>'+str(asset['issuecount'])+'</td>'
-            body += '<td>'+str(asset['units'])+'</td>'
-            body += '<td>'+str(asset['open'])+'</td>'
+            units_str=str(asset['units'])                
+            
+            body += '<td>'+units_str+'</td>'
+            open_str=str(asset['open'])
+            can_open=False
+            can_close=False
+            if ("canopen" in asset) and asset['canopen']:
+                can_open=True
+            if ("canclose" in asset) and asset['canclose']:
+                can_close=True
+            if can_open:
+                if can_close:
+                    open_str += ' (can open and close)'
+                else:
+                    open_str += ' (can open)'
+            else:
+                if can_close:
+                    open_str += ' (can close)'
+            body += '<td>'+open_str+'</td>'
+            
+            fungible_str=str(True)
+            if ("fungible" in asset):
+                fungible_str=str(asset['fungible'])
+            body += '<td>'+fungible_str+'</td>'
+            
             if show_issuer:
-                body += '<td><a href="/' + chain.config['path-name'] + '/address/' + asset['issues'][0]['issuers'][0] + '">' + asset['issues'][0]['issuers'][0] + '</a></td>'
+                body += '<td><a href="/' + chain.config['path-name'] + '/address/' + asset['issues'][0]['issuers'][0] + '">' + asset['issues'][0]['issuers'][0][0:10] + '...</a></td>'
                 
             body += '<td><a href="/' + chain.config['path-name'] + '/transaction/' + asset['issuetxid'] + '">' + asset['issuetxid'][0:10]+ '...</a></td>'                        
             body += '</tr>'
@@ -1248,10 +1284,39 @@ class MCEDataHandler():
         restrict_str = ', '.join(k for k, v in restrict.items() if v)
         if restrict_str == '':
             restrict_str="None"
-        body += '<tr><td>Open</td><td>'+str(info['open'])+'</td></tr>'        
+        open_str=str(info['open'])
+        can_open=False
+        can_close=False
+        if ("canopen" in info) and info['canopen']:
+            can_open=True
+        if ("canclose" in info) and info['canclose']:
+            can_close=True
+        if can_open:
+            if can_close:
+                open_str += ' (can open and close)'
+            else:
+                open_str += ' (can open)'
+        else:
+            if can_close:
+                open_str += ' (can close)'
+        body += '<tr><td>Open</td><td>'+open_str+'</td></tr>'        
+        fungible_str=str(True)
+        if ("fungible" in info):
+            fungible_str=str(info['fungible'])
+        body += '<tr><td>Fungible</td><td>'+fungible_str+'</td></tr>'        
+        
         body += '<tr><td>Restrict</td><td>'+restrict_str+' <a href="/' + chain.config['path-name'] + '/assetpermissions/' + entity_quoted + '">(view permissions)</a></td></tr>'        
         
-        body += '<tr><td>Issued Quantity</td><td>'+str(info['issueqty'])+'</td></tr>'        
+        qty_str=str(info['issueqty'])
+        limits=[]
+        if ("totallimit" in info) and (info['totallimit'] is not None):
+            limits.append("limit " + str(info['totallimit']))
+        if ("issuelimit" in info) and (info['issuelimit'] is not None):
+            limits.append("max " + str(info['issuelimit']) + " per issue")
+        if len(limits) > 0:
+            qty_str += ' (' + ', '.join(limits) + ')'
+            
+        body += '<tr><td>Issued Quantity</td><td>'+qty_str+'</td></tr>'        
         if first_issue['result'] is not None:
             if len(first_issue['result'][0]['issuers'])==1:
                 creator = first_issue['result'][0]['issuers'][0]
@@ -1269,7 +1334,12 @@ class MCEDataHandler():
             
         
         body += '<tr><td>Multiple</td><td>'+str(info['multiple'])+'</td></tr>'        
-        body += '<tr><td>Units</td><td>'+str(info['units'])+'</td></tr>'        
+        
+        units_str=str(info['units'])                
+        if ("issueonlysingleunit" in info) and info['issueonlysingleunit']:
+            units_str += " (single unit per issuance)"
+            
+        body += '<tr><td>Units</td><td>'+units_str+'</td></tr>'        
         details=info['details']
         if (type(details) is OrderedDict) or (type(details) is dict):
             details=json.dumps(info['details'])
@@ -1305,7 +1375,9 @@ class MCEDataHandler():
         if 'issuecount' not in response['result'][0]:
             return self.standard_response('<div class="alert alert-danger" role="warning">Not supported in this version of MultiChain</div>')
             
-            
+        fungible=True
+        if ('fungible' in response['result'][0]):
+            fungible=response['result'][0]['fungible']
         last=response['result'][0]['issuecount']
         
         self.expand_params(nparams,last,True)
@@ -1321,6 +1393,8 @@ class MCEDataHandler():
 
         body += '<table class="table table-striped"><tr>'
         body += '<th>Issue Amount</th>'
+        if not fungible:
+            body += '<th>Token</th>'
         body += '<th>Issuers</th>'
         body += '<th>Details</th>'
         body += '<th>Transaction</th>'
@@ -1329,6 +1403,11 @@ class MCEDataHandler():
         for info in response['result']:
             body += '<tr>'
             body += '<td>'+str(info['qty'])+'</td>'        
+            if not fungible:
+                token_str=''
+                if ('token' in info) and (info['token'] is not None):
+                    token_str=info['token']
+                body += '<td>'+token_str+'</td>'                            
             if len(info['issuers'])==1:
                 creator = info['issuers'][0]
                 creator_address = '<a href="' + '/' + chain.config['path-name'] + '/address/'+ creator + '">' + creator + '</a>'
@@ -1506,6 +1585,9 @@ class MCEDataHandler():
             return self.error_response(asset_count)
         last=asset_count['result']
         
+        if last<=0:            
+            return self.standard_response('<div class="empty-list">No holders found for this asset</div>')            
+            
         self.expand_params(nparams,last)
         
         response=chain.request("explorerlistassetaddresses",[entity_name,True,nparams['count'],nparams['start']])
@@ -1635,7 +1717,7 @@ class MCEDataHandler():
             if keytype is None:
                 body += '<td>'+tx_html+'</td>'                        
                 body += '<td>'+holders_html+'</td>'                
-                if tx['blockheight'] is not None:                
+                if ('blockheight' in tx) and (tx['blockheight'] is not None):                
                     body += '<td>' + format_time(tx['blocktime']) + '</td>'                        
                     body += '<td><a href="/' + chain.config['path-name'] + '/block/' + str(tx['blockheight']) + '">' + str(tx['blockheight']) + '</a></td>'                        
                 else:
@@ -2186,58 +2268,17 @@ class MCEDataHandler():
         body += '<a role="button" class="btn btn-default btn-xs" href="/' + chain.config['path-name'] + '/rawtransactionhex-data/'+str(params[0])+'">Hex</a>'
         body += '</p>'
         
-        body += '<h3>Inputs</h3>'
-        body += '<table class="table table-striped"><tr>'
-        body += '<th>Index</th>'
-        body += '<th>Previous Output</th>'
-        body += '<th>Addresses</th>'
-        body += '<th></th>'
-        body += '<th>ScriptSig</th>'
-        body += '</tr>'                                
+        tokens_found=False
         
-        index=0
-        for vin in info['vin']:
-            td_class=""
-            if ('highlight' in nparams) and  nparams['highlight'] == "i"+str(index):
-                td_class=' class="highlighted"'
-            body += '<tr>'
-            body += '<td'+td_class+' id="i'+str(index)+'">'+str(index)+'</td>'
-            if 'txid' in vin:                
-                body += '<td'+td_class+'><a href="/' + chain.config['path-name'] + '/transaction/' + vin['txid']+'?highlight=o'+str(vin['vout']) +'#o'+str(vin['vout'])+'">'+vin['txid'][0:10]+ ':'+str(vin['vout']) +'</a>'+'</td>'                        
-            else:
-                body += '<td'+td_class+'>Coinbase</td>'
-            addresses = ''
-            if 'addresses' in vin:
-                for address in vin['addresses']:
-                    address_link = '<a href="' + '/' + chain.config['path-name'] + '/address/' + address + '">' + address + '</a>'
-                    addresses += '{0}<br/>'.format(address_link)                
-                    
-            details=''
-            if license_tx:
-                body += '<td'+td_class+'>'+'</td>'
-                body += '<td'+td_class+'>'+tags_to_label_html(vin['tags']).replace("Transfer License","License Token")+'</td>'
-                details+=self.vout_licensetoken(chain,vin)            
-            else:
-                body += '<td'+td_class+'>'+addresses+'</td>'
-                body += '<td'+td_class+'>'+tags_to_label_html(vin['tags']).replace("Transfer Asset","Asset").replace("Native Transfer","Native")+'</td>'
-                details+=self.vout_assettransfers(chain,vin)            
-            if 'scriptSig' in vin:                
-                body += '<td'+td_class+'>'+decode_script(vin['scriptSig']['asm'])+details+'</td>'
-            else:
-                body += '<td'+td_class+'>'+vin['coinbase']+'</td>'
-            body += '</tr>'
-            index += 1
-            
-        body += '</table>'
-        
-        body += '<h3>Outputs</h3>'
-        body += '<table class="table table-striped"><tr>'
-        body += '<th>Index</th>'
-        body += '<th>Spent at Input</th>'
-        body += '<th>Addresses</th>'
-        body += '<th></th>'
-        body += '<th>ScriptPubKey</th>'
-        body += '</tr>'                                
+        output_body=''
+        output_body += '<h3>Outputs</h3>'
+        output_body += '<table class="table table-striped"><tr>'
+        output_body += '<th>Index</th>'
+        output_body += '<th>Spent at Input</th>'
+        output_body += '<th>Addresses</th>'
+        output_body += '<th></th>'
+        output_body += '<th>ScriptPubKey</th>'
+        output_body += '</tr>'                                
         index=0
         for vout in info['vout']:
             license_vout=False
@@ -2246,15 +2287,15 @@ class MCEDataHandler():
             td_class=""
             if ('highlight' in nparams) and  nparams['highlight'] == "o"+str(index):
                 td_class=' class="highlighted"'
-            body += '<tr>'
-            body += '<td '+td_class+'id="o'+str(index)+'">'+str(index)+'</td>'
+            output_body += '<tr>'
+            output_body += '<td '+td_class+'id="o'+str(index)+'">'+str(index)+'</td>'
             if vout['redeem'] is not None:
-                body += '<td'+td_class+'><a href="/' + chain.config['path-name'] + '/transaction/' + vout['redeem']['txid']+'?highlight=i'+str(vout['redeem']['vin'])+'#i'+str(vout['redeem']['vin'])+'">'+vout['redeem']['txid'][0:10]+ ':'+str(vout['redeem']['vin']) +'</a>'+'</td>'                        
+                output_body += '<td'+td_class+'><a href="/' + chain.config['path-name'] + '/transaction/' + vout['redeem']['txid']+'?highlight=i'+str(vout['redeem']['vin'])+'#i'+str(vout['redeem']['vin'])+'">'+vout['redeem']['txid'][0:10]+ ':'+str(vout['redeem']['vin']) +'</a>'+'</td>'                        
             else:
                 if "unspendable" in  vout['tags']:               
-                    body += '<td'+td_class+'>Unspendable</td>'
+                    output_body += '<td'+td_class+'>Unspendable</td>'
                 else:
-                    body += '<td'+td_class+'>Not yet spent</td>'
+                    output_body += '<td'+td_class+'>Not yet spent</td>'
                 
             addresses = ''
             if 'addresses' in vout['scriptPubKey']:
@@ -2265,14 +2306,17 @@ class MCEDataHandler():
 
             details=''
             if license_vout:
-                body += '<td'+td_class+'></td>'
-                body += '<td'+td_class+'>'+tags_to_label_html(vout['tags']).replace("Transfer License","License Token")+'</td>'
+                output_body += '<td'+td_class+'></td>'
+                output_body += '<td'+td_class+'>'+tags_to_label_html(vout['tags']).replace("Transfer License","License Token")+'</td>'
                 details+=self.vout_licensetoken(chain,vout)            
             else:
-                body += '<td'+td_class+'>'+addresses+'</td>'
-                body += '<td'+td_class+'>'+tags_to_label_html(vout['tags']).replace("Transfer Asset","Asset").replace("Native Transfer","Native")+'</td>'
+                output_body += '<td'+td_class+'>'+addresses+'</td>'
+                output_body += '<td'+td_class+'>'+tags_to_label_html(vout['tags']).replace("Transfer Asset","Asset").replace("Native Transfer","Native")+'</td>'
                 details+=self.vout_assettransfers(chain,vout)            
-            if (("issue-asset-details" in vout['tags']) or ("issuemore-asset-details" in vout['tags'])) and ('issue' in info) :
+                if ('tokens' in vout) and vout['tokens']:
+                    tokens_found=True
+
+            if (("issue-asset-details" in vout['tags']) or ("issuemore-asset-details" in vout['tags']) or ("update-asset" in vout['tags'])) and ('issue' in info) :
                 details+=self.vout_assetmetadata(chain,info['issue'],str(params[0]))                            
             details+=self.vout_streamitems(chain,vout,str(params[0]),index)            
             if ("create-stream" in vout['tags']) and ('create' in info) :
@@ -2283,11 +2327,70 @@ class MCEDataHandler():
             details+=self.vout_general_data(chain,vout,str(params[0]),index)            
             if len(details) > 0:
                 details = '<br/><br/>' + details
-            body += '<td'+td_class+'>'+decode_script(vout['scriptPubKey']['asm'])+details+'</td>'
-            body += '</tr>'
+            output_body += '<td'+td_class+'>'+decode_script(vout['scriptPubKey']['asm'])+details+'</td>'
+            output_body += '</tr>'
             index += 1
             
-        body += '</table>'
+        output_body += '</table>'
+        
+        input_body=''
+        input_body += '<h3>Inputs</h3>'
+        input_body += '<table class="table table-striped"><tr>'
+        input_body += '<th>Index</th>'
+        input_body += '<th>Previous Output</th>'
+        input_body += '<th>Addresses</th>'
+        input_body += '<th></th>'
+        input_body += '<th>ScriptSig</th>'
+        input_body += '</tr>'                                
+        
+        if tokens_found and len(info['vin'])>5:
+            tokens_found=False
+            
+        index=0
+        for vin in info['vin']:
+            td_class=""
+            if ('highlight' in nparams) and  nparams['highlight'] == "i"+str(index):
+                td_class=' class="highlighted"'
+            input_body += '<tr>'
+            input_body += '<td'+td_class+' id="i'+str(index)+'">'+str(index)+'</td>'
+            if 'txid' in vin:                
+                input_body += '<td'+td_class+'><a href="/' + chain.config['path-name'] + '/transaction/' + vin['txid']+'?highlight=o'+str(vin['vout']) +'#o'+str(vin['vout'])+'">'+vin['txid'][0:10]+ ':'+str(vin['vout']) +'</a>'+'</td>'                        
+            else:
+                input_body += '<td'+td_class+'>Coinbase</td>'
+            addresses = ''
+            if 'addresses' in vin:
+                for address in vin['addresses']:
+                    address_link = '<a href="' + '/' + chain.config['path-name'] + '/address/' + address + '">' + address + '</a>'
+                    addresses += '{0}<br/>'.format(address_link)                
+                    
+            details=''
+            if license_tx:
+                input_body += '<td'+td_class+'>'+'</td>'
+                input_body += '<td'+td_class+'>'+tags_to_label_html(vin['tags']).replace("Transfer License","License Token")+'</td>'
+                details+=self.vout_licensetoken(chain,vin)            
+            else:
+                input_body += '<td'+td_class+'>'+addresses+'</td>'
+                input_body += '<td'+td_class+'>'+tags_to_label_html(vin['tags']).replace("Transfer Asset","Asset").replace("Native Transfer","Native")+'</td>'
+                assets_vin=vin
+                if tokens_found and ('txid' in vin):
+                    assets_response=chain.request("getrawtransaction",[vin['txid'],1])
+                    if assets_response['result'] is not None:                        
+                        assets_info=assets_response['result']
+                        if vin['vout'] < len(assets_info['vout']):
+                            assets_vin=assets_info['vout'][vin['vout']]                    
+                details+=self.vout_assettransfers(chain,assets_vin)            
+            if 'scriptSig' in vin:                
+                input_body += '<td'+td_class+'>'+decode_script(vin['scriptSig']['asm'])+details+'</td>'
+            else:
+                input_body += '<td'+td_class+'>'+vin['coinbase']+'</td>'
+            input_body += '</tr>'
+            index += 1
+            
+        input_body += '</table>'
+        
+        body += input_body
+        body += output_body
+        
         return self.standard_response(body)
 
     def vout_licensetoken(self,chain,vout):
@@ -2327,6 +2430,10 @@ class MCEDataHandler():
                     if entity_quoted is not None:
                         asset_link='<a href="/' + chain.config['path-name'] + '/asset/' + entity_quoted + '">' + entity_name + '</a>'
                     
+                    token_str=''
+                    if ('token' in asset) and (asset['token'] is not None):
+                        vout['tokens']=True
+                        token_str=' (token ' + asset['token'] + ')'
                     units='units'
                     if asset['qty'] == 1:
                         units='unit'
@@ -2334,16 +2441,16 @@ class MCEDataHandler():
                         if asset['type'] == "issuefirst":
                             result+="Issue " + str(asset['qty']) + " " + units + " of new asset " + asset_link
                         elif asset['type'] == "issuemore":
-                            result+="Issue " + str(asset['qty']) + " more " + units + " of asset " + asset_link
+                            result+="Issue " + str(asset['qty']) + " more " + units + " of asset " + asset_link + token_str
                         elif asset['type'] == "issuemore+transfer":
-                            result+="Transfer and issue " + str(asset['qty']) + " more " + units + " of asset " + asset_link
+                            result+="Transfer and issue " + str(asset['qty']) + " more " + units + " of asset " + asset_link + token_str
                         elif asset['type'] == "transfer":
-                            result+=str(asset['qty']) + " " + units + " of asset " + asset_link
+                            result+=str(asset['qty']) + " " + units + " of asset " + asset_link + token_str
                     else:
                         if entity_quoted is not None:
-                            result+=str(asset['qty']) + " " + units + " of asset " + asset_link
+                            result+=str(asset['qty']) + " " + units + " of asset " + asset_link + token_str
                         else:
-                            result+=str(asset['qty']) + " " + units + " of " + asset_link
+                            result+=str(asset['qty']) + " " + units + " of " + asset_link + token_str
                     
                 
         
@@ -2374,10 +2481,38 @@ class MCEDataHandler():
             restrict_str = ', '.join(k for k, v in restrict.items() if v)
             if restrict_str == '':
                 restrict_str="None"
-            result += '<tr><td>Open</td><td>'+str(info['open'])+'</td></tr>'        
+            open_str=str(info['open'])
+            can_open=False
+            can_close=False
+            if ("canopen" in info) and info['canopen']:
+                can_open=True
+            if ("canclose" in info) and info['canclose']:
+                can_close=True
+            if can_open:
+                if can_close:
+                    open_str += ' (can open and close)'
+                else:
+                    open_str += ' (can open)'
+            else:
+                if can_close:
+                    open_str += ' (can close)'
+            result += '<tr><td>Open</td><td>'+open_str+'</td></tr>'        
             result += '<tr><td>Restrict</td><td>'+restrict_str+' <a href="/' + chain.config['path-name'] + '/assetpermissions/' + entity_quoted + '">(view permissions)</a></td></tr>'        
             result += '<tr><td>Multiple</td><td>'+str(info['multiple'])+'</td></tr>'        
             result += '<tr><td>Units</td><td>'+str(1/info['multiple'])+'</td></tr>'        
+            limits=[]
+            if ("totallimit" in info) and (info['totallimit'] is not None):
+                limits.append(str(info['totallimit']))
+            if ("issuelimit" in info) and (info['issuelimit'] is not None):
+                limits.append(str(info['issuelimit']) + " per issue")
+            limits_str = ' total, '.join(limits)
+            if limits_str == '':
+                limits_str="None"
+            result += '<tr><td>Limit</td><td>'+limits_str+'</td></tr>'        
+            fungible_str=str(True)
+            if ("fungible" in info):
+                fungible_str=str(info['fungible'])
+            result += '<tr><td>Fungible</td><td>'+fungible_str+'</td></tr>'                        
         else:
             result += '<tr><td>Asset</td><td>'+entity_link+'</td></tr>'        
         details=info['details']
