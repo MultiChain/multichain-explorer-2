@@ -10,7 +10,7 @@ import pages
 import data
 import readconf
 import utils
-from cgi import escape
+from html import escape
 import urllib.parse
 
 DEFAULT_CONTENT_TYPE = "text/html; charset=utf-8"
