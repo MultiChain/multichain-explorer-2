@@ -125,6 +125,9 @@ def read_conf(args):
         utils.print_error("Missing port in main section")
         return False
         
+    if is_missing(cfg.settings['main'],'base'):
+        cfg.settings['main']['base']="/"
+        
     cfg.explorer_name=utils.file_file_name(cfg.ini_file)[:-4]
         
     cfg.ini_dir=cfg.settings['main']['ini_dir']

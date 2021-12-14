@@ -26,7 +26,10 @@ class MCEServer(BaseHTTPRequestHandler):
     def parse_path(self):
         
         path=self.path
-#        print(path)
+        if len(path) >= 2:
+            if (path[0] == '/') and (path[1] == '/'):
+                path = path[1:]
+                
         self.nparams={}
         parsed_path=path.split('?')
         if len(parsed_path) == 2:

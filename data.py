@@ -390,7 +390,7 @@ class MCEDataHandler():
             else:
                 body += '<span class="label label-danger">No Connection</span>'
             body += '</td>'
-            body += '<td><a href="./' + chain.config['path-name'] +  '/chain">' + chain.config['name'] + '</a></td>'
+            body += '<td><a href="' + chain.config['path-name'] +  '/chain">' + chain.config['name'] + '</a></td>'
             if response['result'] is not None:
                 native_flag=self.chain_native_flag(chain,response)
                 assets=field_in_dict(response['result'],'assets','?') 
@@ -399,11 +399,11 @@ class MCEDataHandler():
                     if native_flag:
                         assets=str(assets+1) 
                         native_text=' (includes native currency)'
-                body += '<td><a href="/' + chain.config['path-name'] + '/blocks">' + str(response['result']['blocks']) +  '</a></td>'
-                body += '<td><a href="/' + chain.config['path-name'] + '/transactions">' + str(field_in_dict(response['result'],'transactions','?')) +  '</a></td>'
-                body += '<td><a href="/' + chain.config['path-name'] + '/assets">' + str(assets) +  '</a>'+native_text+'</td>'
-                body += '<td><a href="/' + chain.config['path-name'] + '/streams">' + str(field_in_dict(response['result'],'streams','?')) +  '</a></td>'
-                body += '<td><a href="/' + chain.config['path-name'] + '/addresses">' + str(field_in_dict(response['result'],'addresses','?')) +  '</a></td>'
+                body += '<td><a href="' + chain.config['path-name'] + '/blocks">' + str(response['result']['blocks']) +  '</a></td>'
+                body += '<td><a href="' + chain.config['path-name'] + '/transactions">' + str(field_in_dict(response['result'],'transactions','?')) +  '</a></td>'
+                body += '<td><a href="' + chain.config['path-name'] + '/assets">' + str(assets) +  '</a>'+native_text+'</td>'
+                body += '<td><a href="' + chain.config['path-name'] + '/streams">' + str(field_in_dict(response['result'],'streams','?')) +  '</a></td>'
+                body += '<td><a href="' + chain.config['path-name'] + '/addresses">' + str(field_in_dict(response['result'],'addresses','?')) +  '</a></td>'
             else:
                 body += '<td></td><td></td><td></td><td></td><td></td>'
                 
@@ -442,28 +442,28 @@ class MCEDataHandler():
             chain_rewards=response['result']['rewards']            
         
         body += '<table class="table table-bordered table-striped table-condensed">'
-        body += '<tr><td>Blocks</td><td><a href="/' + chain.config['path-name'] + '/blocks">' + str(response['result']['blocks']) +  '</a>'+' <a href="/' + chain.config['path-name'] + '/miners">(view miners)</a></td></tr>'
+        body += '<tr><td>Blocks</td><td><a href="' + chain.config['path-name'] + '/blocks">' + str(response['result']['blocks']) +  '</a>'+' <a href="' + chain.config['path-name'] + '/miners">(view miners)</a></td></tr>'
         tx_count=field_in_dict(response['result'],'transactions','?')
         if tx_count == '?':
             body += '<tr><td>Transactions</td><td>' + str(tx_count) +  '</td></tr>'
         else:
-            body += '<tr><td>Transactions</td><td><a href="/' + chain.config['path-name'] + '/transactions">' + str(field_in_dict(response['result'],'transactions','?')) +  '</a></td></tr>'
-        body += '<tr><td>Assets</td><td><a href="/' + chain.config['path-name'] + '/assets">' + str(assets) +  '</a>'+native_text+'</td></tr>'
-        body += '<tr><td>Streams</td><td><a href="/' + chain.config['path-name'] + '/streams">' + str(field_in_dict(response['result'],'streams','?')) +  '</a></td></tr>'
+            body += '<tr><td>Transactions</td><td><a href="' + chain.config['path-name'] + '/transactions">' + str(field_in_dict(response['result'],'transactions','?')) +  '</a></td></tr>'
+        body += '<tr><td>Assets</td><td><a href="' + chain.config['path-name'] + '/assets">' + str(assets) +  '</a>'+native_text+'</td></tr>'
+        body += '<tr><td>Streams</td><td><a href="' + chain.config['path-name'] + '/streams">' + str(field_in_dict(response['result'],'streams','?')) +  '</a></td></tr>'
         address_count=field_in_dict(response['result'],'addresses','?')
         if address_count == '?':
-            body += '<tr><td>Addresses</td><td>' + str(address_count) + ' <a href="/' + chain.config['path-name'] + '/globalpermissions">(view permissions)</a></td></tr>'
+            body += '<tr><td>Addresses</td><td>' + str(address_count) + ' <a href="' + chain.config['path-name'] + '/globalpermissions">(view permissions)</a></td></tr>'
         else:
-            body += '<tr><td>Addresses</td><td><a href="/' + chain.config['path-name'] + '/addresses">' + str(address_count) +  '</a>'+' <a href="/' + chain.config['path-name'] + '/globalpermissions">(view permissions)</a></td></tr>'
+            body += '<tr><td>Addresses</td><td><a href="' + chain.config['path-name'] + '/addresses">' + str(address_count) +  '</a>'+' <a href="' + chain.config['path-name'] + '/globalpermissions">(view permissions)</a></td></tr>'
         if chain_rewards > 0:        
-            body += '<tr><td>Native Currency</td><td>' + str(chain_rewards) +  ' units <a href="/' + chain.config['path-name'] + '/assetholders/'+DEFAULT_NATIVE_CURRENCY_ID+'">(view holders)</a></td></tr>'
+            body += '<tr><td>Native Currency</td><td>' + str(chain_rewards) +  ' units <a href="' + chain.config['path-name'] + '/assetholders/'+DEFAULT_NATIVE_CURRENCY_ID+'">(view holders)</a></td></tr>'
             
         body += '</table>'
         
 #        body += '<h3>Node</h3>'
 #        body += '<table class="table table-bordered table-striped table-condensed">'
-#        body += '<tr><td>Local Addresses</td><td><a href="/' + chain.config['path-name'] + '/localaddresses">' + '?' +  '</a></td></tr>'
-#        body += '<tr><td>Peers</td><td><a href="/' + chain.config['path-name'] + '/peers">' + str(field_in_dict(response['result'],'peers','?')) +  '</a></td></tr>'
+#        body += '<tr><td>Local Addresses</td><td><a href="' + chain.config['path-name'] + '/localaddresses">' + '?' +  '</a></td></tr>'
+#        body += '<tr><td>Peers</td><td><a href="' + chain.config['path-name'] + '/peers">' + str(field_in_dict(response['result'],'peers','?')) +  '</a></td></tr>'
 #        body += '</table>'
         
         body += '<h3>General Information</h3>'
@@ -562,7 +562,7 @@ class MCEDataHandler():
         if response['result'] is None:
             return self.error_response(response)
         
-        body=nav_bar('/' + chain.config['path-name'] + '/blocks',nparams,"blocks ")                
+        body=nav_bar(chain.config['path-name'] + '/blocks',nparams,"blocks ")                
             
         body += '''
             <table class="table table-striped">
@@ -577,9 +577,9 @@ class MCEDataHandler():
             
         for block in reversed(response['result']):
             body += '<tr>'
-            body += '<td><a href="/' + chain.config['path-name'] + '/block/' + str(block['height']) + '">' + str(block['height']) + '</a></td>'                        
-            body += '<td><a href="/' + chain.config['path-name'] + '/block/' + str(block['height']) + '">' + str(block['hash']) + '</a></td>'
-            body += '<td><a href="/' + chain.config['path-name'] + '/address/' + str(block['miner']) + '">' + str(block['miner']) + '</a></td>'
+            body += '<td><a href="' + chain.config['path-name'] + '/block/' + str(block['height']) + '">' + str(block['height']) + '</a></td>'                        
+            body += '<td><a href="' + chain.config['path-name'] + '/block/' + str(block['height']) + '">' + str(block['hash']) + '</a></td>'
+            body += '<td><a href="' + chain.config['path-name'] + '/address/' + str(block['miner']) + '">' + str(block['miner']) + '</a></td>'
             body += '<td>' + format_time(block['time']) + '</td>'
             body += '<td>' + str(block['txcount']) + '</td>'
             body += '</tr>'
@@ -608,7 +608,7 @@ class MCEDataHandler():
         if response['result'] is None:
             return self.error_response(response)
             
-        body=nav_bar('/' + chain.config['path-name'] + '/addresses',nparams,"addresses ")
+        body=nav_bar(chain.config['path-name'] + '/addresses',nparams,"addresses ")
         
         body += '''
             <table class="table table-striped">
@@ -623,11 +623,11 @@ class MCEDataHandler():
             
         for address in response['result']:
             body += '<tr>'
-            body += '<td><a href="/' + chain.config['path-name'] + '/address/' + address['address'] + '">' + address['address'] + '</a></td>'                
-            body += '<td><a href="/' + chain.config['path-name'] + '/addresstransactions/' + address['address'] + '">'  +str(address['txs']) +'</a></td>'
+            body += '<td><a href="' + chain.config['path-name'] + '/address/' + address['address'] + '">' + address['address'] + '</a></td>'                
+            body += '<td><a href="' + chain.config['path-name'] + '/addresstransactions/' + address['address'] + '">'  +str(address['txs']) +'</a></td>'
             body += '<td>'  +str(address['confirmed']) +'</td>'
-            body += '<td><a href="/' + chain.config['path-name'] + '/addressassets/' + address['address'] + '">'  +str(address['assets']) +'</a></td>'
-            body += '<td><a href="/' + chain.config['path-name'] + '/addressstreams/' + address['address'] + '">'  +str(address['streams']) +'</a></td>'
+            body += '<td><a href="' + chain.config['path-name'] + '/addressassets/' + address['address'] + '">'  +str(address['assets']) +'</a></td>'
+            body += '<td><a href="' + chain.config['path-name'] + '/addressstreams/' + address['address'] + '">'  +str(address['streams']) +'</a></td>'
             body += '</tr>'
 
         body+='</table>'
@@ -657,7 +657,7 @@ class MCEDataHandler():
             
         for miner in response['result']:
             body += '<tr>'
-            body += '<td><a href="/' + chain.config['path-name'] + '/address/' + miner['address'] + '">' + miner['address'] + '</a></td>'                
+            body += '<td><a href="' + chain.config['path-name'] + '/address/' + miner['address'] + '">' + miner['address'] + '</a></td>'                
             if miner['permitted']:                
                 body += '<td><span class="label label-success">Yes</span></td>'        
                 if miner['diversitywaitblocks'] == 0:                
@@ -704,7 +704,7 @@ class MCEDataHandler():
             return self.error_response(response)
             
             
-        body=nav_bar('/' + chain.config['path-name'] + '/transactions',nparams,"transactions ")                
+        body=nav_bar(chain.config['path-name'] + '/transactions',nparams,"transactions ")                
             
         body += '''
             <table class="table table-striped">
@@ -719,11 +719,11 @@ class MCEDataHandler():
         for tx in reversed(response['result']):
             label_html=tags_to_label_html(tx['tags'])
             body += '<tr>'
-            body += '<td><a href="/' + chain.config['path-name'] + '/transaction/' + tx['txid'] + '">' + tx['txid'] + '</a>'  + '</td>'                        
+            body += '<td><a href="' + chain.config['path-name'] + '/transaction/' + tx['txid'] + '">' + tx['txid'] + '</a>'  + '</td>'                        
             body += '<td>' +  label_html + '</td>'                        
             if tx['blockheight'] is not None:                
                 body += '<td>' + format_time(tx['blocktime']) + '</td>'                        
-                body += '<td><a href="/' + chain.config['path-name'] + '/block/' + str(tx['blockheight']) + '">' + str(tx['blockheight']) + '</a></td>'                        
+                body += '<td><a href="' + chain.config['path-name'] + '/block/' + str(tx['blockheight']) + '">' + str(tx['blockheight']) + '</a></td>'                        
             else:
                 body += '<td></td><td></td>'
             body += '</tr>'
@@ -780,10 +780,10 @@ class MCEDataHandler():
             
         body += '<tr><td>Address</td><td>'+address+'</td></tr>'    
         body += '<tr><td>Permissions</td><td>'+permission_string+'</td></tr>'    
-        body += '<tr><td>Transactions</td><td><a href="/' + chain.config['path-name'] + '/addresstransactions/' + address + '">' + str(info['txs']) + '</a></td>'
+        body += '<tr><td>Transactions</td><td><a href="' + chain.config['path-name'] + '/addresstransactions/' + address + '">' + str(info['txs']) + '</a></td>'
         body += '<tr><td>Confirmed</td><td>'+str(info['confirmed'])+'</td></tr>'    
-        body += '<tr><td>Assets</td><td><a href="/' + chain.config['path-name'] + '/addressassets/' + address + '">' + str(info['assets']) + '</a></td>'
-        body += '<tr><td>Streams</td><td><a href="/' + chain.config['path-name'] + '/addressstreams/' + address + '">' + str(info['streams']) + '</a></td>'
+        body += '<tr><td>Assets</td><td><a href="' + chain.config['path-name'] + '/addressassets/' + address + '">' + str(info['assets']) + '</a></td>'
+        body += '<tr><td>Streams</td><td><a href="' + chain.config['path-name'] + '/addressstreams/' + address + '">' + str(info['streams']) + '</a></td>'
         
         body += '</table>'
 
@@ -856,7 +856,7 @@ class MCEDataHandler():
                         
         body = ''
         if nparams['nav']:
-            body=nav_bar('/' + chain.config['path-name'] + '/assetholdertransactions/' + entity_quoted + '/' + address,nparams,"transaction ")
+            body=nav_bar(chain.config['path-name'] + '/assetholdertransactions/' + entity_quoted + '/' + address,nparams,"transaction ")
             
         body += '''
             <table class="table table-striped">
@@ -871,13 +871,13 @@ class MCEDataHandler():
             
         for tx in reversed(response['result']):
             body += '<tr>'
-            body += '<td><a href="/' + chain.config['path-name'] + '/transaction/' + tx['txid'] + '">' + tx['txid'] + '</a>'  + '</td>'                        
+            body += '<td><a href="' + chain.config['path-name'] + '/transaction/' + tx['txid'] + '">' + tx['txid'] + '</a>'  + '</td>'                        
             body += '<td align="right">' + signed_amount_html(tx['amount']) + '</td>'                        
             body += '<td align="right">' + str(tx['balance']) + '</td>'                        
                 
             if tx['blockheight'] is not None:                
                 body += '<td>' + format_time(tx['blocktime']) + '</td>'                        
-                body += '<td><a href="/' + chain.config['path-name'] + '/block/' + str(tx['blockheight']) + '">' + str(tx['blockheight']) + '</a></td>'                        
+                body += '<td><a href="' + chain.config['path-name'] + '/block/' + str(tx['blockheight']) + '">' + str(tx['blockheight']) + '</a></td>'                        
             else:
                 body += '<td></td><td></td>'
             body += '</tr>'
@@ -908,7 +908,7 @@ class MCEDataHandler():
                         
         body = ''
         if nparams['nav']:
-            body=nav_bar('/' + chain.config['path-name'] + '/addresstransactions/' + address,nparams,"transactions ")
+            body=nav_bar(chain.config['path-name'] + '/addresstransactions/' + address,nparams,"transactions ")
             
         body += '''
             <table class="table table-striped">
@@ -923,11 +923,11 @@ class MCEDataHandler():
         for tx in reversed(response['result']):
             label_html=tags_to_label_html(tx['tags'])
             body += '<tr>'
-            body += '<td><a href="/' + chain.config['path-name'] + '/transaction/' + tx['txid'] + '">' + tx['txid'] + '</a>'  + '</td>'                        
+            body += '<td><a href="' + chain.config['path-name'] + '/transaction/' + tx['txid'] + '">' + tx['txid'] + '</a>'  + '</td>'                        
             body += '<td>' +  label_html + '</td>'                        
             if tx['blockheight'] is not None:                
                 body += '<td>' + format_time(tx['blocktime']) + '</td>'                        
-                body += '<td><a href="/' + chain.config['path-name'] + '/block/' + str(tx['blockheight']) + '">' + str(tx['blockheight']) + '</a></td>'                        
+                body += '<td><a href="' + chain.config['path-name'] + '/block/' + str(tx['blockheight']) + '">' + str(tx['blockheight']) + '</a></td>'                        
             else:
                 body += '<td></td><td></td>'
             body += '</tr>'
@@ -958,7 +958,7 @@ class MCEDataHandler():
                         
         body = ''
         if nparams['nav']:
-            body=nav_bar('/' + chain.config['path-name'] + '/blocktransactions/' + params[0],nparams,"transactions ")
+            body=nav_bar(chain.config['path-name'] + '/blocktransactions/' + params[0],nparams,"transactions ")
             
         body += '''
             <table class="table table-striped">
@@ -971,7 +971,7 @@ class MCEDataHandler():
         for tx in response['result']:
             label_html=tags_to_label_html(tx['tags'])
             body += '<tr>'
-            body += '<td><a href="/' + chain.config['path-name'] + '/transaction/' + tx['txid'] + '">' + tx['txid'] + '</a>'  + '</td>'                        
+            body += '<td><a href="' + chain.config['path-name'] + '/transaction/' + tx['txid'] + '">' + tx['txid'] + '</a>'  + '</td>'                        
             body += '<td>' +  label_html + '</td>'                        
             body += '</tr>'
             
@@ -1005,7 +1005,7 @@ class MCEDataHandler():
                         
         body = ''
         if nparams['nav']:
-            body+=nav_bar('/' + chain.config['path-name'] + '/addressassets/' + address,nparams,"assets ")
+            body+=nav_bar(chain.config['path-name'] + '/addressassets/' + address,nparams,"assets ")
             
         body += '''
             <table class="table table-striped">
@@ -1028,7 +1028,7 @@ class MCEDataHandler():
                 
             asset_link="Native Currency"
             if entity_quoted is not None:
-                asset_link='<a href="/' + chain.config['path-name'] + '/asset/' + entity_quoted + '">' + entity_name + '</a>'
+                asset_link='<a href="' + chain.config['path-name'] + '/asset/' + entity_quoted + '">' + entity_name + '</a>'
             
             body += '<td>'+asset_link+'</td>'    
             
@@ -1036,7 +1036,7 @@ class MCEDataHandler():
                entity_quoted=DEFAULT_NATIVE_CURRENCY_ID 
                
             if entity_quoted is not None:
-                body += '<td>'+str(asset['qty'])+' <a href="/' + chain.config['path-name'] + '/assetholdertransactions/' + entity_quoted + '/' + address + '">(transactions)</a></td>'    
+                body += '<td>'+str(asset['qty'])+' <a href="' + chain.config['path-name'] + '/assetholdertransactions/' + entity_quoted + '/' + address + '">(transactions)</a></td>'    
             else:
                 body += '<td>'+str(asset['qty'])+'</td>'    
                 
@@ -1072,7 +1072,7 @@ class MCEDataHandler():
                         
         body = ''
         if nparams['nav']:
-            body+=nav_bar('/' + chain.config['path-name'] + '/addressstreams/' + address,nparams,"streams ")
+            body+=nav_bar(chain.config['path-name'] + '/addressstreams/' + address,nparams,"streams ")
             
         body += '''
             <table class="table table-striped">
@@ -1089,12 +1089,12 @@ class MCEDataHandler():
             entity_quoted=stream['createtxid'] 
             if ('name' in stream) and (len(stream['name']) > 0):                
                 entity_quoted=parse.quote_plus(stream['name'])
-                body += '<td><a href="/' + chain.config['path-name'] + '/stream/' + entity_quoted + '">' + stream['name'] + '</a></td>'    
+                body += '<td><a href="' + chain.config['path-name'] + '/stream/' + entity_quoted + '">' + stream['name'] + '</a></td>'    
             else:  
-                body += '<td><a href="/' + chain.config['path-name'] + '/stream/' + entity_quoted + '">No name</a></td>'    
+                body += '<td><a href="' + chain.config['path-name'] + '/stream/' + entity_quoted + '">No name</a></td>'    
 
             if stream["items"] is not None:              
-                body += '<td><a href="/' + chain.config['path-name'] + '/publisheritems/' + entity_quoted + '/' + address + '">'+str(stream['items'])+'</a></td>'                
+                body += '<td><a href="' + chain.config['path-name'] + '/publisheritems/' + entity_quoted + '/' + address + '">'+str(stream['items'])+'</a></td>'                
                 body += '<td>'+str(stream['confirmed'])+'</td>'    
             else:
                 body += '<td colspan="2">Not subscribed</td>'                
@@ -1148,7 +1148,7 @@ class MCEDataHandler():
             show_issuer=True
             
             
-        body=nav_bar('/' + chain.config['path-name'] + '/assets',nparams,"assets ")
+        body=nav_bar(chain.config['path-name'] + '/assets',nparams,"assets ")
             
         body += '''
             <table class="table table-striped">
@@ -1192,12 +1192,12 @@ class MCEDataHandler():
             entity_quoted=asset['issuetxid'] 
             if ('name' in asset) and (len(asset['name']) > 0):                
                 entity_quoted=parse.quote_plus(asset['name'])
-                body += '<td><a href="/' + chain.config['path-name'] + '/asset/' + entity_quoted + '">' + asset['name'] + '</a></td>'    
+                body += '<td><a href="' + chain.config['path-name'] + '/asset/' + entity_quoted + '">' + asset['name'] + '</a></td>'    
             else:  
-                body += '<td><a href="/' + chain.config['path-name'] + '/asset/' + entity_quoted + '">No name</a></td>'    
+                body += '<td><a href="' + chain.config['path-name'] + '/asset/' + entity_quoted + '">No name</a></td>'    
             if self.display_local:
                 if asset['subscribed']:                
-                    body += '<td><a href="/' + chain.config['path-name'] + '/assettransactions/' + entity_quoted + '">' + str(asset['transactions']) + '</a></td>'
+                    body += '<td><a href="' + chain.config['path-name'] + '/assettransactions/' + entity_quoted + '">' + str(asset['transactions']) + '</a></td>'
                 else:
                     body += '<td>Not subscribed</td>'
                 
@@ -1239,9 +1239,9 @@ class MCEDataHandler():
             body += '<td>'+fungible_str+'</td>'
             
             if show_issuer:
-                body += '<td><a href="/' + chain.config['path-name'] + '/address/' + asset['issues'][0]['issuers'][0] + '">' + asset['issues'][0]['issuers'][0][0:10] + '...</a></td>'
+                body += '<td><a href="' + chain.config['path-name'] + '/address/' + asset['issues'][0]['issuers'][0] + '">' + asset['issues'][0]['issuers'][0][0:10] + '...</a></td>'
                 
-            body += '<td><a href="/' + chain.config['path-name'] + '/transaction/' + asset['issuetxid'] + '">' + asset['issuetxid'][0:10]+ '...</a></td>'                        
+            body += '<td><a href="' + chain.config['path-name'] + '/transaction/' + asset['issuetxid'] + '">' + asset['issuetxid'][0:10]+ '...</a></td>'                        
             body += '</tr>'
 
         body+='</table>'
@@ -1274,7 +1274,7 @@ class MCEDataHandler():
             
         if 'name' in info:
             body += '<tr><td>Name</td><td>'+info['name']+'</td></tr>'        
-        body += '<tr><td>First Transaction</td><td><a href="/' + chain.config['path-name'] + '/transaction/' + info['issuetxid'] + '">' + info['issuetxid']+ '</a></td></tr>'        
+        body += '<tr><td>First Transaction</td><td><a href="' + chain.config['path-name'] + '/transaction/' + info['issuetxid'] + '">' + info['issuetxid']+ '</a></td></tr>'        
         if ('assetref' in info) and (info['assetref'] is not None):
             body += '<tr><td>Asset Reference</td><td>'+str(info['assetref'])+'</td></tr>'        
         if "restrict" in info:
@@ -1305,7 +1305,7 @@ class MCEDataHandler():
             fungible_str=str(info['fungible'])
         body += '<tr><td>Fungible</td><td>'+fungible_str+'</td></tr>'        
         
-        body += '<tr><td>Restrict</td><td>'+restrict_str+' <a href="/' + chain.config['path-name'] + '/assetpermissions/' + entity_quoted + '">(view permissions)</a></td></tr>'        
+        body += '<tr><td>Restrict</td><td>'+restrict_str+' <a href="' + chain.config['path-name'] + '/assetpermissions/' + entity_quoted + '">(view permissions)</a></td></tr>'        
         
         qty_str=str(info['issueqty'])
         limits=[]
@@ -1320,17 +1320,17 @@ class MCEDataHandler():
         if first_issue['result'] is not None:
             if len(first_issue['result'][0]['issuers'])==1:
                 creator = first_issue['result'][0]['issuers'][0]
-                creator_address = '<a href="' + '/' + chain.config['path-name'] + '/address/'+ creator + '">' + creator + '</a>'
+                creator_address = '<a href="' + chain.config['path-name'] + '/address/'+ creator + '">' + creator + '</a>'
             else:
                 creator_address = ''
                 for creator in first_issue['result'][0]['issuers']:
-                    creator_link = '<a href="' + '/' + chain.config['path-name'] + '/address/' + creator + '">' + creator + '</a>'
+                    creator_link = '<a href="' + chain.config['path-name'] + '/address/' + creator + '">' + creator + '</a>'
                     creator_address += '{0}<br/>'.format(creator_link)
             body += '<tr><td>Issuers</td><td>'+creator_address+'</td></tr>'        
         issue_count='?'
         if "issuecount" in info:
             issue_count=info['issuecount']
-            body += '<tr><td>Asset Issues</td><td><a href="/' + chain.config['path-name'] + '/assetissues/' + entity_quoted + '">'+str(issue_count)+'</a></td></tr>'        
+            body += '<tr><td>Asset Issues</td><td><a href="' + chain.config['path-name'] + '/assetissues/' + entity_quoted + '">'+str(issue_count)+'</a></td></tr>'        
             
         
         body += '<tr><td>Multiple</td><td>'+str(info['multiple'])+'</td></tr>'        
@@ -1347,12 +1347,12 @@ class MCEDataHandler():
         
         if self.display_local:            
             if info['subscribed']:
-                body += '<tr><td>Transactions</td><td><a href="/' + chain.config['path-name'] + '/assettransactions/' + entity_quoted + '">' + str(info['transactions']) + '</a></td>'
+                body += '<tr><td>Transactions</td><td><a href="' + chain.config['path-name'] + '/assettransactions/' + entity_quoted + '">' + str(info['transactions']) + '</a></td>'
                 body += '<tr><td>Confirmed</td><td>' + str(info['confirmed']) + '</td>'
             
         address_count=chain.request("explorerlistassetaddresses",[entity_name,"-"])
         if address_count['result'] is not None:
-            body += '<tr><td>Holders</td><td><a href="/' + chain.config['path-name'] + '/assetholders/' + entity_quoted + '">'+str(address_count['result'])+'</a></td></tr>'
+            body += '<tr><td>Holders</td><td><a href="' + chain.config['path-name'] + '/assetholders/' + entity_quoted + '">'+str(address_count['result'])+'</a></td></tr>'
                     
         body += '</table>'
 
@@ -1389,7 +1389,7 @@ class MCEDataHandler():
         
         body = ''
         if nparams['nav']:
-            body+=nav_bar('/' + chain.config['path-name'] + '/assetissues/' + entity_name,nparams,"issues ")
+            body+=nav_bar(chain.config['path-name'] + '/assetissues/' + entity_name,nparams,"issues ")
 
         body += '<table class="table table-striped"><tr>'
         body += '<th>Issue Amount</th>'
@@ -1410,18 +1410,18 @@ class MCEDataHandler():
                 body += '<td>'+token_str+'</td>'                            
             if len(info['issuers'])==1:
                 creator = info['issuers'][0]
-                creator_address = '<a href="' + '/' + chain.config['path-name'] + '/address/'+ creator + '">' + creator + '</a>'
+                creator_address = '<a href="' + chain.config['path-name'] + '/address/'+ creator + '">' + creator + '</a>'
             else:
                 creator_address = ''
                 for creator in info['issuers']:
-                    creator_link = '<a href="' + '/' + chain.config['path-name'] + '/address/' + creator + '">' + creator + '</a>'
+                    creator_link = '<a href="' + chain.config['path-name'] + '/address/' + creator + '">' + creator + '</a>'
                     creator_address += '{0}<br/>'.format(creator_link)
             body += '<td>'+creator_address+'</td>'        
             details=info['details']
             if (type(details) is OrderedDict) or (type(details) is dict):
                 details=json.dumps(info['details'])
             body += '<td>'+str(details)+'</td>'                                    
-            body += '<td><a href="/' + chain.config['path-name'] + '/transaction/' + info['txid'] + '">' + info['txid'][0:10]+ '...</a></td>'        
+            body += '<td><a href="' + chain.config['path-name'] + '/transaction/' + info['txid'] + '">' + info['txid'][0:10]+ '...</a></td>'        
             body += '</tr>'
             
         body += '</table>'
@@ -1449,7 +1449,7 @@ class MCEDataHandler():
         if response['result'] is None:
             return self.error_response(response)
                         
-        body=nav_bar('/' + chain.config['path-name'] + '/streams',nparams,"streams ")
+        body=nav_bar(chain.config['path-name'] + '/streams',nparams,"streams ")
             
         body += '''
             <table class="table table-striped">
@@ -1469,14 +1469,14 @@ class MCEDataHandler():
             entity_quoted = stream['createtxid']                 
             if ('name' in stream) and (len(stream['name']) > 0):                
                 entity_quoted=parse.quote_plus(stream['name'])
-                body += '<td><a href="/' + chain.config['path-name'] + '/stream/' + entity_quoted + '">' + stream['name'] + '</a></td>'    
+                body += '<td><a href="' + chain.config['path-name'] + '/stream/' + entity_quoted + '">' + stream['name'] + '</a></td>'    
             else:  
-                body += '<td><a href="/' + chain.config['path-name'] + '/stream/' + entity_quoted + '">No name</a></td>'    
+                body += '<td><a href="' + chain.config['path-name'] + '/stream/' + entity_quoted + '">No name</a></td>'    
                 
             if stream['subscribed']:                
-                body += '<td><a href="/' + chain.config['path-name'] + '/streamitems/' + entity_quoted + '">' + str(stream['items']) + '</a></td>'
-                body += '<td><a href="/' + chain.config['path-name'] + '/streamkeys/' + entity_quoted + '">' + str(stream['keys']) + '</a></td>'
-                body += '<td><a href="/' + chain.config['path-name'] + '/streampublishers/' + entity_quoted + '">' + str(stream['publishers']) + '</a></td>'
+                body += '<td><a href="' + chain.config['path-name'] + '/streamitems/' + entity_quoted + '">' + str(stream['items']) + '</a></td>'
+                body += '<td><a href="' + chain.config['path-name'] + '/streamkeys/' + entity_quoted + '">' + str(stream['keys']) + '</a></td>'
+                body += '<td><a href="' + chain.config['path-name'] + '/streampublishers/' + entity_quoted + '">' + str(stream['publishers']) + '</a></td>'
             else:
                 body += '<td colspan="3">Not subscribed</td>'
                 
@@ -1489,8 +1489,8 @@ class MCEDataHandler():
                 restrict_str="None"
             
             body += '<td>' + restrict_str + '</td>'            
-            body += '<td><a href="/' + chain.config['path-name'] + '/address/' + stream['creators'][0] + '">' + stream['creators'][0] + '</a></td>'
-            body += '<td><a href="/' + chain.config['path-name'] + '/transaction/' + stream['createtxid'] + '">' + stream['createtxid']+ '</a></td>'                        
+            body += '<td><a href="' + chain.config['path-name'] + '/address/' + stream['creators'][0] + '">' + stream['creators'][0] + '</a></td>'
+            body += '<td><a href="' + chain.config['path-name'] + '/transaction/' + stream['createtxid'] + '">' + stream['createtxid']+ '</a></td>'                        
             body += '</tr>'
 
         body+='</table>'
@@ -1522,7 +1522,7 @@ class MCEDataHandler():
             
         if 'name' in info:
             body += '<tr><td>Name</td><td>'+info['name']+'</td></tr>'        
-        body += '<tr><td>Creation Transaction</td><td><a href="/' + chain.config['path-name'] + '/transaction/' + info['createtxid'] + '">' + info['createtxid']+ '</a></td></tr>'        
+        body += '<tr><td>Creation Transaction</td><td><a href="' + chain.config['path-name'] + '/transaction/' + info['createtxid'] + '">' + info['createtxid']+ '</a></td></tr>'        
         if ('streamref' in info) and (info['streamref'] is not None):
             body += '<tr><td>Stream Reference</td><td>'+str(info['streamref'])+'</td></tr>'        
         if "restrict" in info:
@@ -1532,16 +1532,16 @@ class MCEDataHandler():
         restrict_str = ', '.join(k for k, v in restrict.items() if v)
         if restrict_str == '':
             restrict_str="None"
-        body += '<tr><td>Restrict</td><td>'+restrict_str+' <a href="/' + chain.config['path-name'] + '/streampermissions/' + entity_quoted + '">(view permissions)</a></td></tr>'        
+        body += '<tr><td>Restrict</td><td>'+restrict_str+' <a href="' + chain.config['path-name'] + '/streampermissions/' + entity_quoted + '">(view permissions)</a></td></tr>'        
         if "salted" in info:
             body += '<tr><td>Salted</td><td>'+str(info['salted'])+'</td></tr>'        
         if len(info['creators'])==1:
             creator = info['creators'][0]
-            creator_address = '<a href="' + '/' + chain.config['path-name'] + '/address/'+ creator + '">' + creator + '</a>'
+            creator_address = '<a href="' + chain.config['path-name'] + '/address/'+ creator + '">' + creator + '</a>'
         else:
             creator_address = ''
             for creator in info['creators']:
-                creator_link = '<a href="' + '/' + chain.config['path-name'] + '/address/' + creator + '">' + creator + '</a>'
+                creator_link = '<a href="' + chain.config['path-name'] + '/address/' + creator + '">' + creator + '</a>'
                 creator_address += '{0}<br/>'.format(creator_link)
         body += '<tr><td>Creators</td><td>'+creator_address+'</td></tr>'        
         
@@ -1553,10 +1553,10 @@ class MCEDataHandler():
         if info['subscribed']:
             if self.display_local:            
                 body += '<tr><td>Subscribed</td><td><span class="label label-success">Yes</span></td></tr>'        
-            body += '<tr><td>Items</td><td><a href="/' + chain.config['path-name'] + '/streamitems/' + entity_quoted + '">' + str(info['items']) + '</a></td>'
+            body += '<tr><td>Items</td><td><a href="' + chain.config['path-name'] + '/streamitems/' + entity_quoted + '">' + str(info['items']) + '</a></td>'
             body += '<tr><td>Confirmed</td><td>' + str(info['confirmed']) + '</td>'
-            body += '<tr><td>Keys</td><td><a href="/' + chain.config['path-name'] + '/streamkeys/' + entity_quoted + '">' + str(info['keys']) + '</a></td>'
-            body += '<tr><td>Publishers</td><td><a href="/' + chain.config['path-name'] + '/streampublishers/' + entity_quoted + '">' + str(info['publishers']) + '</a></td>'
+            body += '<tr><td>Keys</td><td><a href="' + chain.config['path-name'] + '/streamkeys/' + entity_quoted + '">' + str(info['keys']) + '</a></td>'
+            body += '<tr><td>Publishers</td><td><a href="' + chain.config['path-name'] + '/streampublishers/' + entity_quoted + '">' + str(info['publishers']) + '</a></td>'
         else:
             if self.display_local:            
                 body += '<tr><td>Subscribed</td><td><span class="label label-warning">No</span></td></tr>'        
@@ -1597,7 +1597,7 @@ class MCEDataHandler():
         
         body = ''
         if nparams['nav']:
-            body+=nav_bar('/' + chain.config['path-name'] + '/assetsholders/' + entity_name,nparams,"addresses ")
+            body+=nav_bar(chain.config['path-name'] + '/assetsholders/' + entity_name,nparams,"addresses ")
             
         body += '''
             <table class="table table-striped">
@@ -1609,9 +1609,9 @@ class MCEDataHandler():
             
         for address in reversed(response['result']):
             body += '<tr>'
-            body += '<td><a href="/' + chain.config['path-name'] + '/address/' + address['address'] + '">' + address['address'] + '</a></td>'    
+            body += '<td><a href="' + chain.config['path-name'] + '/address/' + address['address'] + '">' + address['address'] + '</a></td>'    
                 
-            body += '<td>'+str(address['qty'])+' <a href="/' + chain.config['path-name'] + '/assetholdertransactions/' + entity_quoted + '/' + address['address'] + '">(transactions)</a></td>'    
+            body += '<td>'+str(address['qty'])+' <a href="' + chain.config['path-name'] + '/assetholdertransactions/' + entity_quoted + '/' + address['address'] + '">(transactions)</a></td>'    
             body += '</tr>'
             
         body+='</table>'
@@ -1672,7 +1672,7 @@ class MCEDataHandler():
             
         body=''
         if nparams['nav']:
-            body+=nav_bar('/' + chain.config['path-name'] + link,nparams,"transactions ")
+            body+=nav_bar(chain.config['path-name'] + link,nparams,"transactions ")
             
         body += '<table class="table table-striped"><tr>'
         if keytype is None:
@@ -1706,20 +1706,20 @@ class MCEDataHandler():
             if non_zero_count > 0:
                 holders_html+='<table class="table table-bordered table-condensed inner-table">'
                 for h,v in tx['addresses'].items():
-                    holders_html+='<tr><td><a href="' + '/' + chain.config['path-name'] + '/assetholdertransactions/' + entity_quoted  + '/' + h + '">' + h + '</a></td>'
+                    holders_html+='<tr><td><a href="' + chain.config['path-name'] + '/assetholdertransactions/' + entity_quoted  + '/' + h + '">' + h + '</a></td>'
                     holders_html+='<td align="right">' + signed_amount_html(v) + '</td></tr>'
                 holders_html+='</table>'
             else:
                 holders_html="None"
                 
-            tx_html='<a href="/' + chain.config['path-name'] + '/transaction/' + tx['txid'] + '">' + tx['txid']+ '</a>'                    
+            tx_html='<a href="' + chain.config['path-name'] + '/transaction/' + tx['txid'] + '">' + tx['txid']+ '</a>'                    
             body += '<tr>'
             if keytype is None:
                 body += '<td>'+tx_html+'</td>'                        
                 body += '<td>'+holders_html+'</td>'                
                 if ('blockheight' in tx) and (tx['blockheight'] is not None):                
                     body += '<td>' + format_time(tx['blocktime']) + '</td>'                        
-                    body += '<td><a href="/' + chain.config['path-name'] + '/block/' + str(tx['blockheight']) + '">' + str(tx['blockheight']) + '</a></td>'                        
+                    body += '<td><a href="' + chain.config['path-name'] + '/block/' + str(tx['blockheight']) + '">' + str(tx['blockheight']) + '</a></td>'                        
                 else:
                     body += '<td></td><td></td>'
             body += '</tr>'
@@ -1842,7 +1842,7 @@ class MCEDataHandler():
             
         body=''
         if nparams['nav']:
-            body+=nav_bar('/' + chain.config['path-name'] + link,nparams,"items ")
+            body+=nav_bar(chain.config['path-name'] + link,nparams,"items ")
             
         body += '<table class="table table-striped"><tr>'
         if keytype is None:
@@ -1898,7 +1898,7 @@ class MCEDataHandler():
                 keys=[res['key']]
                 
             # Create a list of key links
-            prefix = '/' + chain.config['path-name'] + '/keyitems/' + entity_quoted
+            prefix = chain.config['path-name'] + '/keyitems/' + entity_quoted
             keylinks = ['<a href="{0}/{1}">{2}</a>'.format(prefix, parse.quote_plus(key),key) for key in keys]
             keyshtml = ', '.join(keylinks)
             # If list is too long, display only first few keys, and enable a popover with the full list
@@ -1921,18 +1921,18 @@ class MCEDataHandler():
                 p = item['publishers'][0]
                 if keytype == 'publishers':
                     p=res['publisher']
-                publisher_address = '<a href="' + '/' + chain.config['path-name'] + '/publisheritems/' + entity_quoted + '/' + p + '">' + p + '</a>'
+                publisher_address = '<a href="' + chain.config['path-name'] + '/publisheritems/' + entity_quoted + '/' + p + '">' + p + '</a>'
             else:
                 publisher_address = ''
                 for p in item['publishers']:
-                    publisher_link = '<a href="' + '/' + chain.config['path-name'] + '/publisheritems/' + entity_quoted + '/' + p + '">' + p + '</a>'
+                    publisher_link = '<a href="' + chain.config['path-name'] + '/publisheritems/' + entity_quoted + '/' + p + '">' + p + '</a>'
                     publisher_address += '{0}<br/>'.format(publisher_link)
                 
             offchain_html="No"
             if item['offchain']:
                 offchain_html="Yes"
                 
-            tx_html='<a href="/' + chain.config['path-name'] + '/transaction/' + txid + '">' + txid[0:10]+ '...</a>'                    
+            tx_html='<a href="' + chain.config['path-name'] + '/transaction/' + txid + '">' + txid[0:10]+ '...</a>'                    
             body += '<tr>'
             if keytype is None:
                 body += '<td>'+time_html+'</td>'
@@ -2032,7 +2032,7 @@ class MCEDataHandler():
                 body += '<h3>'+permissions[p]['display-name']+'</h3>'                
                 body += '<table class="table table-bordered table-striped table-condensed">'
                 for address in permissions[p]['addresses']:                
-                    body += '<tr><td><a href="' + '/' + chain.config['path-name'] + '/address/' + address + '">' + address + '</a></td></tr>'
+                    body += '<tr><td><a href="' + chain.config['path-name'] + '/address/' + address + '">' + address + '</a></td></tr>'
                 body += '</table>'
             
         return self.standard_response(body)
@@ -2056,16 +2056,16 @@ class MCEDataHandler():
         body += '<table class="table table-bordered table-striped table-condensed">'
         body += '<tr><td>Hash</td><td>' + str(response['result']['hash']) +  '</td></tr>'
         if  'previousblockhash' in response['result']:
-            body += '<tr><td>Previous Block</td><td><a href="/' + chain.config['path-name'] + '/block/'+str(response['result']['height']-1)+'">' + str(response['result']['previousblockhash']) +  '</a></td></tr>'
+            body += '<tr><td>Previous Block</td><td><a href="' + chain.config['path-name'] + '/block/'+str(response['result']['height']-1)+'">' + str(response['result']['previousblockhash']) +  '</a></td></tr>'
         else:
             body += '<tr><td>Previous Block</td><td></td></tr>'
         if  'nextblockhash' in response['result']:                    
-            body += '<tr><td>Next Block</td><td><a href="/' + chain.config['path-name'] + '/block/'+str(response['result']['height']+1)+'">' + str(response['result']['nextblockhash']) +  '</a></td></tr>'
+            body += '<tr><td>Next Block</td><td><a href="' + chain.config['path-name'] + '/block/'+str(response['result']['height']+1)+'">' + str(response['result']['nextblockhash']) +  '</a></td></tr>'
         else:
             body += '<tr><td>Next Block</td><td></td></tr>'
             
         body += '<tr><td>Height</td><td>' + str(response['result']['height']) +  '</td></tr>'
-        body += '<tr><td>Miner</td><td><a href="/' + chain.config['path-name'] + '/address/'+str(response['result']['miner'])+'">' + str(response['result']['miner']) +  '</a></td></tr>'
+        body += '<tr><td>Miner</td><td><a href="' + chain.config['path-name'] + '/address/'+str(response['result']['miner'])+'">' + str(response['result']['miner']) +  '</a></td></tr>'
         body += '<tr><td>Version</td><td>' + str(response['result']['version']) +  '</td></tr>'
         body += '<tr><td>Transaction Merkle Root</td><td>' + str(response['result']['merkleroot']) +  '</td></tr>'
         body += '<tr><td>Time</td><td>' + format_time(response['result']['time']) +  '</td></tr>'
@@ -2083,7 +2083,7 @@ class MCEDataHandler():
                     
             for tx in response['result']['tx']:
                 body += '<tr>'
-                body += '<td><a href="/' + chain.config['path-name'] + '/transaction/' + tx + '">' + tx+ '</a></td>'                        
+                body += '<td><a href="' + chain.config['path-name'] + '/transaction/' + tx + '">' + tx+ '</a></td>'                        
                 body += '</tr>'
         else:
             body += '''
@@ -2094,7 +2094,7 @@ class MCEDataHandler():
             for tx in exp_response['result']:
                 label_html=tags_to_label_html(tx['tags'])
                 body += '<tr>'
-                body += '<td><a href="/' + chain.config['path-name'] + '/transaction/' + tx['txid'] + '">' + tx['txid'] + '</a>'  + '</td>'                        
+                body += '<td><a href="' + chain.config['path-name'] + '/transaction/' + tx['txid'] + '">' + tx['txid'] + '</a>'  + '</td>'                        
                 body += '<td>' +  label_html + '</td>'                        
                 body += '</tr>'
                                 
@@ -2120,25 +2120,25 @@ class MCEDataHandler():
         body += '<table class="table table-bordered table-striped table-condensed">'
         body += '<tr><td>Hash</td><td>' + str(response['result']['hash']) +  '</td></tr>'
         if  'previousblockhash' in response['result']:
-            body += '<tr><td>Previous Block</td><td><a href="/' + chain.config['path-name'] + '/block/'+str(response['result']['height']-1)+'">' + str(response['result']['previousblockhash']) +  '</a></td></tr>'
+            body += '<tr><td>Previous Block</td><td><a href="' + chain.config['path-name'] + '/block/'+str(response['result']['height']-1)+'">' + str(response['result']['previousblockhash']) +  '</a></td></tr>'
         else:
             body += '<tr><td>Previous Block</td><td></td></tr>'
         if  'nextblockhash' in response['result']:                    
-            body += '<tr><td>Next Block</td><td><a href="/' + chain.config['path-name'] + '/block/'+str(response['result']['height']+1)+'">' + str(response['result']['nextblockhash']) +  '</a></td></tr>'
+            body += '<tr><td>Next Block</td><td><a href="' + chain.config['path-name'] + '/block/'+str(response['result']['height']+1)+'">' + str(response['result']['nextblockhash']) +  '</a></td></tr>'
         else:
             body += '<tr><td>Next Block</td><td></td></tr>'
             
         body += '<tr><td>Height</td><td>' + str(response['result']['height']) +  '</td></tr>'
-        body += '<tr><td>Miner</td><td><a href="/' + chain.config['path-name'] + '/address/'+str(response['result']['miner'])+'">' + str(response['result']['miner']) +  '</a></td></tr>'
+        body += '<tr><td>Miner</td><td><a href="' + chain.config['path-name'] + '/address/'+str(response['result']['miner'])+'">' + str(response['result']['miner']) +  '</a></td></tr>'
         body += '<tr><td>Version</td><td>' + str(response['result']['version']) +  '</td></tr>'
         body += '<tr><td>Transaction Merkle Root</td><td>' + str(response['result']['merkleroot']) +  '</td></tr>'
         body += '<tr><td>Time</td><td>' + format_time(response['result']['time']) +  '</td></tr>'
         body += '<tr><td>Nonce</td><td>' + str(response['result']['nonce']) +  '</td></tr>'
-        body += '<tr><td>Transactions</td><td><a href="/' + chain.config['path-name'] + '/blocktransactions/'+params[0]+'">' + str(len(response['result']['tx'])) +  '</a></td></tr>'
+        body += '<tr><td>Transactions</td><td><a href="' + chain.config['path-name'] + '/blocktransactions/'+params[0]+'">' + str(len(response['result']['tx'])) +  '</a></td></tr>'
         body += '</table>'
         
             
-        tx_body = '<h3><a href="/' + chain.config['path-name'] + '/blocktransactions/'+params[0]+'">Transactions</a></h3>'
+        tx_body = '<h3><a href="' + chain.config['path-name'] + '/blocktransactions/'+params[0]+'">Transactions</a></h3>'
         
         tx_counts=[(len(response['result']['tx']),0),(0,0)]
         
@@ -2165,7 +2165,7 @@ class MCEDataHandler():
                 for tx in response['result']:
                     label_html=tags_to_label_html(tx['tags'])
                     tx_body += '<tr>'
-                    tx_body += '<td><a href="/' + chain.config['path-name'] + '/transaction/' + tx['txid'] + '">' + tx['txid'] + '</a>'  + '</td>'                        
+                    tx_body += '<td><a href="' + chain.config['path-name'] + '/transaction/' + tx['txid'] + '">' + tx['txid'] + '</a>'  + '</td>'                        
                     tx_body += '<td>' +  label_html + '</td>'                        
                     tx_body += '</tr>'
         body+=tx_body
@@ -2231,7 +2231,7 @@ class MCEDataHandler():
         body += '<tr><td>Hash</td><td>'+info['txid']+'</td></tr>'        
         body += '<tr><td>Confirmed In</td><td>'
         if info['blockheight'] is not None:
-            body += '<a href="/' + chain.config['path-name'] + '/block/'+str(info['blockheight'])+'">Block ' + str(info['blockheight']) +  '</a> (' +format_time(info['blocktime']) +')'            
+            body += '<a href="' + chain.config['path-name'] + '/block/'+str(info['blockheight'])+'">Block ' + str(info['blockheight']) +  '</a> (' +format_time(info['blocktime']) +')'            
         body += '</td></tr>'        
 
         holders_html=''
@@ -2245,8 +2245,8 @@ class MCEDataHandler():
                 else:
                     entity_name="Asset with no name"
                 
-                asset_link='<a href="/' + chain.config['path-name'] + '/asset/' + entity_quoted + '">' + entity_name + '</a>'
-                holders_html+='<tr><td><a href="' + '/' + chain.config['path-name'] + '/assetholdertransactions/' + entity_quoted  + '/' + asset['address'] + '">' + asset['address'] + '</a></td>'
+                asset_link='<a href="' + chain.config['path-name'] + '/asset/' + entity_quoted + '">' + entity_name + '</a>'
+                holders_html+='<tr><td><a href="' + chain.config['path-name'] + '/assetholdertransactions/' + entity_quoted  + '/' + asset['address'] + '">' + asset['address'] + '</a></td>'
                 holders_html+='<td>' + asset_link + '</td>'
                 holders_html+='<td align="right">' + signed_amount_html(asset['qty']) + '</td></tr>'
             holders_html+='</table>'
@@ -2264,8 +2264,8 @@ class MCEDataHandler():
         body += '<tr><td>Type</td><td>'+tags_to_label_html(info['tags'])+'</td></tr>'         
         body += '</table>'
         body += '<p class="text-right">'
-        body += '<a role="button" class="btn btn-default btn-xs" href="/' + chain.config['path-name'] + '/rawtransaction-data/'+str(params[0])+'">JSON</a>'
-        body += '<a role="button" class="btn btn-default btn-xs" href="/' + chain.config['path-name'] + '/rawtransactionhex-data/'+str(params[0])+'">Hex</a>'
+        body += '<a role="button" class="btn btn-default btn-xs" href="' + chain.config['path-name'] + '/rawtransaction-data/'+str(params[0])+'">JSON</a>'
+        body += '<a role="button" class="btn btn-default btn-xs" href="' + chain.config['path-name'] + '/rawtransactionhex-data/'+str(params[0])+'">Hex</a>'
         body += '</p>'
         
         tokens_found=False
@@ -2290,7 +2290,7 @@ class MCEDataHandler():
             output_body += '<tr>'
             output_body += '<td '+td_class+'id="o'+str(index)+'">'+str(index)+'</td>'
             if vout['redeem'] is not None:
-                output_body += '<td'+td_class+'><a href="/' + chain.config['path-name'] + '/transaction/' + vout['redeem']['txid']+'?highlight=i'+str(vout['redeem']['vin'])+'#i'+str(vout['redeem']['vin'])+'">'+vout['redeem']['txid'][0:10]+ ':'+str(vout['redeem']['vin']) +'</a>'+'</td>'                        
+                output_body += '<td'+td_class+'><a href="' + chain.config['path-name'] + '/transaction/' + vout['redeem']['txid']+'?highlight=i'+str(vout['redeem']['vin'])+'#i'+str(vout['redeem']['vin'])+'">'+vout['redeem']['txid'][0:10]+ ':'+str(vout['redeem']['vin']) +'</a>'+'</td>'                        
             else:
                 if "unspendable" in  vout['tags']:               
                     output_body += '<td'+td_class+'>Unspendable</td>'
@@ -2300,7 +2300,7 @@ class MCEDataHandler():
             addresses = ''
             if 'addresses' in vout['scriptPubKey']:
                 for address in vout['scriptPubKey']['addresses']:
-                    address_link = '<a href="' + '/' + chain.config['path-name'] + '/address/' + address + '">' + address + '</a>'
+                    address_link = '<a href="' + chain.config['path-name'] + '/address/' + address + '">' + address + '</a>'
                     addresses += '{0}<br/>'.format(address_link)                
                     
 
@@ -2354,13 +2354,13 @@ class MCEDataHandler():
             input_body += '<tr>'
             input_body += '<td'+td_class+' id="i'+str(index)+'">'+str(index)+'</td>'
             if 'txid' in vin:                
-                input_body += '<td'+td_class+'><a href="/' + chain.config['path-name'] + '/transaction/' + vin['txid']+'?highlight=o'+str(vin['vout']) +'#o'+str(vin['vout'])+'">'+vin['txid'][0:10]+ ':'+str(vin['vout']) +'</a>'+'</td>'                        
+                input_body += '<td'+td_class+'><a href="' + chain.config['path-name'] + '/transaction/' + vin['txid']+'?highlight=o'+str(vin['vout']) +'#o'+str(vin['vout'])+'">'+vin['txid'][0:10]+ ':'+str(vin['vout']) +'</a>'+'</td>'                        
             else:
                 input_body += '<td'+td_class+'>Coinbase</td>'
             addresses = ''
             if 'addresses' in vin:
                 for address in vin['addresses']:
-                    address_link = '<a href="' + '/' + chain.config['path-name'] + '/address/' + address + '">' + address + '</a>'
+                    address_link = '<a href="' + chain.config['path-name'] + '/address/' + address + '">' + address + '</a>'
                     addresses += '{0}<br/>'.format(address_link)                
                     
             details=''
@@ -2428,7 +2428,7 @@ class MCEDataHandler():
                     
                     asset_link="Native Currency"
                     if entity_quoted is not None:
-                        asset_link='<a href="/' + chain.config['path-name'] + '/asset/' + entity_quoted + '">' + entity_name + '</a>'
+                        asset_link='<a href="' + chain.config['path-name'] + '/asset/' + entity_quoted + '">' + entity_name + '</a>'
                     
                     token_str=''
                     if ('token' in asset) and (asset['token'] is not None):
@@ -2469,7 +2469,7 @@ class MCEDataHandler():
         else:
             entity_name="No name"
                         
-        entity_link='<a href="/' + chain.config['path-name'] + '/asset/' + entity_quoted + '">' + entity_name + '</a>'
+        entity_link='<a href="' + chain.config['path-name'] + '/asset/' + entity_quoted + '">' + entity_name + '</a>'
             
         result='<table class="table table-bordered table-condensed inner-table">'
         if info['type'] == "issuefirst":
@@ -2497,7 +2497,7 @@ class MCEDataHandler():
                 if can_close:
                     open_str += ' (can close)'
             result += '<tr><td>Open</td><td>'+open_str+'</td></tr>'        
-            result += '<tr><td>Restrict</td><td>'+restrict_str+' <a href="/' + chain.config['path-name'] + '/assetpermissions/' + entity_quoted + '">(view permissions)</a></td></tr>'        
+            result += '<tr><td>Restrict</td><td>'+restrict_str+' <a href="' + chain.config['path-name'] + '/assetpermissions/' + entity_quoted + '">(view permissions)</a></td></tr>'        
             result += '<tr><td>Multiple</td><td>'+str(info['multiple'])+'</td></tr>'        
             result += '<tr><td>Units</td><td>'+str(1/info['multiple'])+'</td></tr>'        
             limits=[]
@@ -2555,7 +2555,7 @@ class MCEDataHandler():
         else:
             entity_name="No name"
                         
-        entity_link='<a href="/' + chain.config['path-name'] + '/stream/' + entity_quoted + '">' + entity_name + '</a>'
+        entity_link='<a href="' + chain.config['path-name'] + '/stream/' + entity_quoted + '">' + entity_name + '</a>'
         
         result='<table class="table table-bordered table-condensed inner-table">'
         result += '<tr><td>Name</td><td>'+entity_link+'</td></tr>'        
@@ -2566,7 +2566,7 @@ class MCEDataHandler():
         restrict_str = ', '.join(k for k, v in restrict.items() if v)
         if restrict_str == '':
             restrict_str="None"
-        result += '<tr><td>Restrict</td><td>'+restrict_str+' <a href="/' + chain.config['path-name'] + '/streampermissions/' + entity_quoted + '">(view permissions)</a></td></tr>'        
+        result += '<tr><td>Restrict</td><td>'+restrict_str+' <a href="' + chain.config['path-name'] + '/streampermissions/' + entity_quoted + '">(view permissions)</a></td></tr>'        
         if "salted" in info:
             result += '<tr><td>Salted</td><td>'+str(info['salted'])+'</td></tr>'        
         
@@ -2598,7 +2598,7 @@ class MCEDataHandler():
         else:
             entity_name="No name"
             
-        entity_link='<a href="/' + chain.config['path-name'] + '/stream/' + entity_quoted + '">' + entity_name + '</a>'
+        entity_link='<a href="' + chain.config['path-name'] + '/stream/' + entity_quoted + '">' + entity_name + '</a>'
         
         keys = []
         if 'key' in item:
@@ -2606,7 +2606,7 @@ class MCEDataHandler():
         else: 
             keys = item['keys']
 
-        prefix = '/' + chain.config['path-name'] + '/keyitems/' + entity_quoted
+        prefix = chain.config['path-name'] + '/keyitems/' + entity_quoted
         keylinks = ['<a href="{0}/{1}">{2}</a>'.format(prefix, parse.quote_plus(key),key) for key in keys]
         keyshtml = ', '.join(keylinks)
         # If list is too long, display only first few keys, and enable a popover with the full list
@@ -2654,7 +2654,7 @@ class MCEDataHandler():
                 if ('name' in grant['for']) and (len(grant['for']['name']) > 0):                
                     entity_quoted=parse.quote_plus(grant['for']['name'])
                     entity_name=grant['for']['name']
-                    entity_link='<a href="/' + chain.config['path-name'] + '/'+entity_type+'/' + entity_quoted + '">' + entity_name + '</a>'
+                    entity_link='<a href="' + chain.config['path-name'] + '/'+entity_type+'/' + entity_quoted + '">' + entity_name + '</a>'
                 else:
                     entity_name="with no name"
                     entity_link=entity_name
@@ -2713,7 +2713,7 @@ class MCEDataHandler():
         
     def general_data_html(self, chain,data,txid,vout):
         
-        data_ref = '/' + chain.config['path-name'] + '/txoutdata-data/' + txid + '/' + str(vout)
+        data_ref = chain.config['path-name'] + '/txoutdata-data/' + txid + '/' + str(vout)
         result=''
         printdata = False
         mydata = None
