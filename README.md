@@ -60,7 +60,7 @@ Explorer 2 supports multiple nodes and/or chains, whether local or remote. Each 
 
 * `name` (required) – the name of the blockchain.
 * `datadir` (optional, local nodes only) – path of the node's blockchain directory (otherwise default assumed).
-* `rpchost` (required for remote nodes) – hostname or IP address of the node.
+* `rpchost` (required for remote nodes) – hostname or IP address of the node, with the `http://` or `https://` prefix.
 * `rpcport` (optional for local, required for remote) – port for the node's API.
 * `rpcuser` (optional for local, required for remote) – username for the node's API.
 * `rpcpassword` (optional for local, required for remote) – password for the node's API.
