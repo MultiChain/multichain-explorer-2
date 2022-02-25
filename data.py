@@ -1916,6 +1916,7 @@ class MCEDataHandler():
                 data_html=self.general_data_html(chain,data,txid,vout)
             else:
                 data_html="Not available"
+                txid = item['data']['txid']
             
             if (len(item['publishers'])==1) or (keytype == 'publishers'):
                 p = item['publishers'][0]
