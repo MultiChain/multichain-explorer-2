@@ -110,7 +110,23 @@ class MCEServer(BaseHTTPRequestHandler):
         except IOError:
             self.handler=cfg.connerror_handler
             return None
-            
+
+    def do_POST(self):
+        
+        self.parse_path()
+        
+        content_length = int(self.headers['Content-Length'])
+        post_data = self.rfile.read(content_length) 
+        fields = urllib.parse.parse_qs(str(post_data,"UTF-8"))
+        
+        self.handler=getattr(cfg.data_handler, 'handle_search', None);
+        result=self.handler(self.chain,fields)
+        
+        self.send_response(302)
+        self.send_header('Location', result)
+        self.end_headers()
+
+        
     def log_message(self, format, *args):
         return
         

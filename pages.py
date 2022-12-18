@@ -35,17 +35,19 @@ DEFAULT_TEMPLATE = """
 </head>
 <body>
     <div class="container">
-	<table><tr><td>
-	<a title="Back to home" href=""><img src="logo32.png" alt="MultiChain logo" /></a>
-	</td><td style="padding-left: 10px;" valign="middle">
+	<table class="header-table"><tr><td class="header-logo">
+	<a title="Back to home" href=""><img src="logo32.png" alt="MultiChain logo" height="40" /></a>
+	</td><td class="header-title">
 	<h1>%(h1)s</h1>
-	</td></tr></table>
+	</td><td class="header-search">
+	%(search)s
+     </td></tr></table>
     %(body)s
     
     <br><br>
     <p style="font-size: smaller">
         <span style="font-style: italic">
-            Powered by <a href="https://github.com/MultiChain/multichain-explorer-2">MultiChain Explorer 2</a>
+            Powered by <a href="https://github.com/MultiChain/multichain-explorer-2">MultiChain Explorer %(version)s</a>
         </span>
     </p>
     </div>
@@ -58,7 +60,9 @@ DEFAULT_TEMPVARS={
             "myheader":"",
             "h1":"",
             "body":"",
-            "base":""
+            "base":"",
+            "search":"",
+            "version":cfg.version,
             }
 
 DEFAULT_HEADERS=[("Content-type", "text/html")]
@@ -126,6 +130,11 @@ class MCEPageHandler():
         
         return self.standard_response(tvars)
         
+    def chain_search_form(self,chain):
+        form_html='<form method="POST" name="search" action="' + chain.config['path-name'] + '/search">'
+        form_html+='<input name="search_value" type="text" value=""  size="32" /> <input type="submit" name="search" value="Search"/></form> '
+        return form_html;
+        
     def handle_chain(self,chain,params,nparams):
         
         if chain is None:
@@ -133,7 +142,13 @@ class MCEPageHandler():
             
         tvars=self.template_vars.copy();
         body = ''   
-        body += '<div class="container">'
+        if len(params) > 0:
+            body += '<div class="error-wrapper">'
+            body += 'No asset, stream, address or transaction to match '
+            body += '"' + str(parse.unquote_plus(params[0])) + '"'
+            body += ' could be found.'
+            body += '</div>'
+        body += '<div>'
         body += '<div class="row">'
         body += '<div class="col-md-6" id="summary">'
         body += '</div>'
@@ -143,15 +158,14 @@ class MCEPageHandler():
         body += '</div>'
         
         tvars['body']=body          
+        tvars['search']=self.chain_search_form(chain);
         tvars['title']="MultiChain Explorer - " + chain.config['display-name']
         tvars['h1']='<a href="'+chain.config['path-name']+'">' + chain.config['display-name'] + '</a>'
-
-# List of divs to be updated and elements of the path which should retreive data for this div
         self.objects=[]
         self.objects.append({"id":"summary","path":[chain.config['path-name'],"chainsummary-data"]});
         self.objects.append({"id":"parameters","path":[chain.config['path-name'],"chainparameters-data"]});
         
-        self.template_vars=tvars
+##        self.template_vars=tvars
         return self.standard_response(tvars)
         
     
@@ -178,6 +192,7 @@ class MCEPageHandler():
 #        body += '<div id="publishers">' + DEFAULT_LOADING_HTML + '</div>'
         
         tvars['body']=body          
+        tvars['search']=self.chain_search_form(chain);
         title=" - stream: " + entity_name
         tvars['title']="MultiChain Explorer - " + chain.config['display-name'] + title
         tvars['h1']='<a href="'+chain.config['path-name']+'">' + chain.config['display-name'] + '</a>' + title
@@ -189,7 +204,7 @@ class MCEPageHandler():
         self.objects.append({"id":"keys","path":[chain.config['path-name'],"streamkeys-data",entity_quoted],"params":{"onlylast":1}});
         self.objects.append({"id":"publishers","path":[chain.config['path-name'],"streampublishers-data",entity_quoted],"params":{"onlylast":1}});
         
-        self.template_vars=tvars
+#        self.template_vars=tvars
         return self.standard_response(tvars)
         
     def handle_asset(self,chain,params,nparams):
@@ -215,6 +230,7 @@ class MCEPageHandler():
 #        body += '<div id="holders">' + DEFAULT_LOADING_HTML + '</div>'
         
         tvars['body']=body          
+        tvars['search']=self.chain_search_form(chain);
         title=" - asset: " + entity_name
         tvars['title']="MultiChain Explorer - " + chain.config['display-name'] + title
         tvars['h1']='<a href="'+chain.config['path-name']+'">' + chain.config['display-name'] + '</a>' + title
@@ -225,7 +241,7 @@ class MCEPageHandler():
 #        self.objects.append({"id":"issues","path":[chain.config['path-name'],"assetissues-data",entity_quoted],"params":{"onlylast":1}});
         self.objects.append({"id":"holders","path":[chain.config['path-name'],"assetholders-data",entity_quoted],"params":{"onlylast":1}});
         
-        self.template_vars=tvars
+#        self.template_vars=tvars
         return self.standard_response(tvars)
     
     def handle_address(self,chain,params,nparams):
@@ -254,9 +270,10 @@ class MCEPageHandler():
 #        body += '<div id="streams">' + DEFAULT_LOADING_HTML + '</div>'
         
         tvars['body']=body          
+        tvars['search']=self.chain_search_form(chain);
         title=" - address: " + str(params[0])
         tvars['title']="MultiChain Explorer - " + chain.config['display-name'] + title
-        tvars['h1']='<a href="'+chain.config['path-name']+'">' + chain.config['display-name'] + '</a>' + title
+        tvars['h1']='<a href="'+chain.config['path-name']+'">' + chain.config['display-name'] + '</a>' + " - address: " + str(params[0][0:10]) + "..."
 
         self.objects=[]
         self.objects.append({"id":"summary","path":[chain.config['path-name'],"addresssummary-data",str(params[0])]});
@@ -266,7 +283,7 @@ class MCEPageHandler():
 #        self.objects.append({"id":"assets","path":[chain.config['path-name'],"addressassets-data",str(params[0])],"params":{"onlylast":1}});
 #        self.objects.append({"id":"streams","path":[chain.config['path-name'],"addressstreams-data",str(params[0])],"params":{"onlylast":1}});
         
-        self.template_vars=tvars
+#        self.template_vars=tvars
         return self.standard_response(tvars)
     
     def handle_streams(self,chain,params,nparams):        
@@ -299,15 +316,16 @@ class MCEPageHandler():
         
         
         tvars['body']=body          
+        tvars['search']=self.chain_search_form(chain);
         title=" - " + display_name
         tvars['title']="MultiChain Explorer - " + chain.config['display-name'] + title
         tvars['h1']='<a href="'+chain.config['path-name']+'">' + chain.config['display-name'] + '</a>' + title
-
+        
 # List of divs to be updated and elements of the path which should retreive data for this div
         self.objects=[]
         self.objects.append({"id":name,"path":[chain.config['path-name'],name+"-data"]+params,"params":nparams});
         
-        self.template_vars=tvars
+#        self.template_vars=tvars
         return self.standard_response(tvars)
         
         
@@ -326,13 +344,14 @@ class MCEPageHandler():
         
         
         tvars['body']=body          
+        tvars['search']=self.chain_search_form(chain);
         tvars['title']="MultiChain Explorer - " + chain.config['display-name'] + " - " + entity_name + " - asset issues"
         tvars['h1']='<a href="'+chain.config['path-name']+'">' + chain.config['display-name'] + '</a>' + " - " + '<a href="'+chain.config['path-name']+"/asset/"+entity_quoted+'">' + entity_name + '</a>' + " - asset issues"
 
         self.objects=[]
         self.objects.append({"id":"items","path":[chain.config['path-name'],"assetissues-data"]+params,"params":nparams});
         
-        self.template_vars=tvars
+#        self.template_vars=tvars
         return self.standard_response(tvars)
         
     def handle_addressstreams(self,chain,params,nparams):
@@ -348,13 +367,14 @@ class MCEPageHandler():
         
         
         tvars['body']=body          
+        tvars['search']=self.chain_search_form(chain);
         tvars['title']="MultiChain Explorer - " + chain.config['display-name'] + " - " + str(params[0]) + " - address streams"
         tvars['h1']='<a href="'+chain.config['path-name']+'">' + chain.config['display-name'] + '</a>' + " - " + '<a href="'+chain.config['path-name']+"/address/"+str(params[0])+'">' + str(params[0]) + '</a>' + " - address streams"
 
         self.objects=[]
         self.objects.append({"id":"items","path":[chain.config['path-name'],"addressstreams-data"]+params,"params":nparams});
         
-        self.template_vars=tvars
+#        self.template_vars=tvars
         return self.standard_response(tvars)
         
     def handle_addressassets(self,chain,params,nparams):
@@ -370,13 +390,14 @@ class MCEPageHandler():
         
         
         tvars['body']=body          
+        tvars['search']=self.chain_search_form(chain);
         tvars['title']="MultiChain Explorer - " + chain.config['display-name'] + " - " + str(params[0]) + " - address assets"
         tvars['h1']='<a href="'+chain.config['path-name']+'">' + chain.config['display-name'] + '</a>' + " - " + '<a href="'+chain.config['path-name']+"/address/"+str(params[0])+'">' + str(params[0]) + '</a>' + " - address assets"
 
         self.objects=[]
         self.objects.append({"id":"items","path":[chain.config['path-name'],"addressassets-data"]+params,"params":nparams});
         
-        self.template_vars=tvars
+#        self.template_vars=tvars
         return self.standard_response(tvars)
         
     def handle_addresstransactions(self,chain,params,nparams):
@@ -392,13 +413,14 @@ class MCEPageHandler():
         
         
         tvars['body']=body          
+        tvars['search']=self.chain_search_form(chain);
         tvars['title']="MultiChain Explorer - " + chain.config['display-name'] + " - " + str(params[0]) + " - address transactions"
         tvars['h1']='<a href="'+chain.config['path-name']+'">' + chain.config['display-name'] + '</a>' + " - " + '<a href="'+chain.config['path-name']+"/address/"+str(params[0])+'">' + str(params[0]) + '</a>' + " - address transactions"
 
         self.objects=[]
         self.objects.append({"id":"items","path":[chain.config['path-name'],"addresstransactions-data"]+params,"params":nparams});
         
-        self.template_vars=tvars
+#        self.template_vars=tvars
         return self.standard_response(tvars)
         
     def handle_blocktransactions(self,chain,params,nparams):
@@ -414,13 +436,14 @@ class MCEPageHandler():
         
         
         tvars['body']=body          
+        tvars['search']=self.chain_search_form(chain);
         tvars['title']="MultiChain Explorer - " + chain.config['display-name'] + " - block " + str(params[0]) + " - transactions"
         tvars['h1']='<a href="'+chain.config['path-name']+'">' + chain.config['display-name'] + '</a>' + " - block " + '<a href="'+chain.config['path-name']+"/block/"+str(params[0])+'">' + str(params[0]) + '</a>' + " - transactions"
 
         self.objects=[]
         self.objects.append({"id":"items","path":[chain.config['path-name'],"blocktransactions-data"]+params,"params":nparams});
         
-        self.template_vars=tvars
+#        self.template_vars=tvars
         return self.standard_response(tvars)
         
     def handle_assettransactions(self,chain,params,nparams):
@@ -439,13 +462,14 @@ class MCEPageHandler():
         
         
         tvars['body']=body          
+        tvars['search']=self.chain_search_form(chain);
         tvars['title']="MultiChain Explorer - " + chain.config['display-name'] + " - " + entity_name + " - asset transactions"
         tvars['h1']='<a href="'+chain.config['path-name']+'">' + chain.config['display-name'] + '</a>' + " - " + '<a href="'+chain.config['path-name']+"/asset/"+entity_quoted+'">' + entity_name + '</a>' + " - asset transactions"
 
         self.objects=[]
         self.objects.append({"id":"items","path":[chain.config['path-name'],"assettransactions-data"]+params,"params":nparams});
         
-        self.template_vars=tvars
+#        self.template_vars=tvars
         return self.standard_response(tvars)
         
     def handle_assetholders(self,chain,params,nparams):
@@ -463,6 +487,7 @@ class MCEPageHandler():
         entity_name=parse.unquote_plus(entity_quoted)
         
         tvars['body']=body          
+        tvars['search']=self.chain_search_form(chain);
         if entity_quoted != DEFAULT_NATIVE_CURRENCY_ID:
             tvars['title']="MultiChain Explorer - " + chain.config['display-name'] + " - " + entity_name + " - asset holders"
             tvars['h1']='<a href="'+chain.config['path-name']+'">' + chain.config['display-name'] + '</a>' + " - " + '<a href="'+chain.config['path-name']+"/asset/"+entity_quoted+'">' + entity_name + '</a>' + " - asset holders"
@@ -473,7 +498,7 @@ class MCEPageHandler():
         self.objects=[]
         self.objects.append({"id":"items","path":[chain.config['path-name'],"assetholders-data"]+params,"params":nparams});
         
-        self.template_vars=tvars
+#        self.template_vars=tvars
         return self.standard_response(tvars)
         
     def handle_assetholdertransactions(self,chain,params,nparams):
@@ -491,6 +516,7 @@ class MCEPageHandler():
         
         
         tvars['body']=body          
+        tvars['search']=self.chain_search_form(chain);
         if entity_quoted != DEFAULT_NATIVE_CURRENCY_ID:
             tvars['title']="MultiChain Explorer - " + chain.config['display-name'] + " - " + str(params[1]) + " - transactions for asset " + entity_name
             tvars['h1']='<a href="'+chain.config['path-name']+'">' + chain.config['display-name'] + '</a>' + " - " + '<a href="'+chain.config['path-name']+"/address/"+str(params[1])+'">' + str(params[1]) + '</a>' + " - transactions for asset " + '<a href="'+chain.config['path-name']+"/asset/"+entity_quoted+'">' + entity_name + '</a>'
@@ -501,7 +527,7 @@ class MCEPageHandler():
         self.objects=[]
         self.objects.append({"id":"items","path":[chain.config['path-name'],"assetholdertransactions-data"]+params,"params":nparams});
         
-        self.template_vars=tvars
+#        self.template_vars=tvars
         return self.standard_response(tvars)
         
     def handle_globalpermissions(self,chain,params,nparams):
@@ -514,13 +540,14 @@ class MCEPageHandler():
         
         
         tvars['body']=body          
+        tvars['search']=self.chain_search_form(chain);
         tvars['title']="MultiChain Explorer - " + chain.config['display-name'] + " - global permissions"
         tvars['h1']='<a href="'+chain.config['path-name']+'">' + chain.config['display-name'] + '</a>' + " - global permissions"
 
         self.objects=[]
         self.objects.append({"id":"items","path":[chain.config['path-name'],"globalpermissions-data"]+params,"params":nparams});
         
-        self.template_vars=tvars
+#        self.template_vars=tvars
         return self.standard_response(tvars)
         
     def handle_assetpermissions(self,chain,params,nparams):
@@ -539,13 +566,14 @@ class MCEPageHandler():
         
         
         tvars['body']=body          
+        tvars['search']=self.chain_search_form(chain);
         tvars['title']="MultiChain Explorer - " + chain.config['display-name'] + " - " + entity_name + " - asset permissions"
         tvars['h1']='<a href="'+chain.config['path-name']+'">' + chain.config['display-name'] + '</a>' + " - " + '<a href="'+chain.config['path-name']+"/asset/"+entity_quoted+'">' + entity_name + '</a>' + " - asset permissions"
 
         self.objects=[]
         self.objects.append({"id":"items","path":[chain.config['path-name'],"assetpermissions-data"]+params,"params":nparams});
         
-        self.template_vars=tvars
+#        self.template_vars=tvars
         return self.standard_response(tvars)
         
     def handle_streampermissions(self,chain,params,nparams):
@@ -564,13 +592,14 @@ class MCEPageHandler():
         
         
         tvars['body']=body          
+        tvars['search']=self.chain_search_form(chain);
         tvars['title']="MultiChain Explorer - " + chain.config['display-name'] + " - " + entity_name + " - stream permissions"
         tvars['h1']='<a href="'+chain.config['path-name']+'">' + chain.config['display-name'] + '</a>' + " - " + '<a href="'+chain.config['path-name']+"/stream/"+entity_quoted+'">' + entity_name + '</a>' + " - stream permissions"
 
         self.objects=[]
         self.objects.append({"id":"items","path":[chain.config['path-name'],"streampermissions-data"]+params,"params":nparams});
         
-        self.template_vars=tvars
+#        self.template_vars=tvars
         return self.standard_response(tvars)
         
     def handle_streamitems(self,chain,params,nparams):
@@ -589,13 +618,14 @@ class MCEPageHandler():
         
         
         tvars['body']=body          
+        tvars['search']=self.chain_search_form(chain);
         tvars['title']="MultiChain Explorer - " + chain.config['display-name'] + " - " + entity_name+ " - stream items"
         tvars['h1']='<a href="'+chain.config['path-name']+'">' + chain.config['display-name'] + '</a>' + " - " + '<a href="'+chain.config['path-name']+"/stream/"+entity_quoted+'">' + entity_name + '</a>' + " - stream items"
 
         self.objects=[]
         self.objects.append({"id":"items","path":[chain.config['path-name'],"streamitems-data"]+params,"params":nparams});
         
-        self.template_vars=tvars
+#        self.template_vars=tvars
         return self.standard_response(tvars)
         
     def handle_streamkeys(self,chain,params,nparams):
@@ -614,13 +644,14 @@ class MCEPageHandler():
         
         
         tvars['body']=body          
+        tvars['search']=self.chain_search_form(chain);
         tvars['title']="MultiChain Explorer - " + chain.config['display-name'] + " - " + entity_name + " - stream keys"
         tvars['h1']='<a href="'+chain.config['path-name']+'">' + chain.config['display-name'] + '</a>' + " - " + '<a href="'+chain.config['path-name']+"/stream/"+entity_quoted+'">' + entity_name + '</a>' + " - stream keys"
 
         self.objects=[]
         self.objects.append({"id":"items","path":[chain.config['path-name'],"streamkeys-data"]+params,"params":nparams});
         
-        self.template_vars=tvars
+#        self.template_vars=tvars
         return self.standard_response(tvars)
         
     def handle_streampublishers(self,chain,params,nparams):
@@ -639,13 +670,14 @@ class MCEPageHandler():
         
         
         tvars['body']=body          
+        tvars['search']=self.chain_search_form(chain);
         tvars['title']="MultiChain Explorer - " + chain.config['display-name'] + " - " + entity_name + " - stream publishers"
         tvars['h1']='<a href="'+chain.config['path-name']+'">' + chain.config['display-name'] + '</a>' + " - " + '<a href="'+chain.config['path-name']+"/stream/"+entity_quoted+'">' + entity_name + '</a>' + " - stream publishers"
 
         self.objects=[]
         self.objects.append({"id":"items","path":[chain.config['path-name'],"streampublishers-data"]+params,"params":nparams});
         
-        self.template_vars=tvars
+#        self.template_vars=tvars
         return self.standard_response(tvars)
         
     def handle_keyitems(self,chain,params,nparams):
@@ -663,13 +695,14 @@ class MCEPageHandler():
         entity_name=parse.unquote_plus(entity_quoted)
         
         tvars['body']=body          
+        tvars['search']=self.chain_search_form(chain);
         tvars['title']="MultiChain Explorer - " + chain.config['display-name'] + " - " + entity_name + " - items for key " + parse.unquote_plus(str(params[1]))
         tvars['h1']='<a href="'+chain.config['path-name']+'">' + chain.config['display-name'] + '</a>' + " - " + '<a href="'+chain.config['path-name']+"/stream/"+entity_quoted+'">' + entity_name + '</a>' + " - items for key " + parse.unquote_plus(str(params[1]))
 
         self.objects=[]
         self.objects.append({"id":"items","path":[chain.config['path-name'],"keyitems-data"]+params,"params":nparams});
         
-        self.template_vars=tvars
+#        self.template_vars=tvars
         return self.standard_response(tvars)
         
     def handle_publisheritems(self,chain,params,nparams):
@@ -688,13 +721,14 @@ class MCEPageHandler():
         
         
         tvars['body']=body          
+        tvars['search']=self.chain_search_form(chain);
         tvars['title']="MultiChain Explorer - " + chain.config['display-name'] + " - " + entity_name + " - items published by " + str(params[1])
-        tvars['h1']='<a href="'+chain.config['path-name']+'">' + chain.config['display-name'] + '</a>' + " - " + '<a href="'+chain.config['path-name']+"/stream/"+entity_quoted+'">' + entity_name + '</a>' + " - items published by " + '<a href="'+chain.config['path-name']+"/address/"+str(params[1])+'">' + str(params[1]) + '</a>'
+        tvars['h1']='<a href="'+chain.config['path-name']+'">' + chain.config['display-name'] + '</a>' + " - " + '<a href="'+chain.config['path-name']+"/stream/"+entity_quoted+'">' + entity_name + '</a>' + " - items published by " + '<a href="'+chain.config['path-name']+"/address/"+str(params[1])+'">' + str(params[1])[0:10] + '...' + '</a>'
 
         self.objects=[]
         self.objects.append({"id":"items","path":[chain.config['path-name'],"publisheritems-data"]+params,"params":nparams});
         
-        self.template_vars=tvars
+#        self.template_vars=tvars
         return self.standard_response(tvars)
         
     def handle_block(self,chain,params,nparams):
@@ -714,6 +748,7 @@ class MCEPageHandler():
 #        body += '<div id="transactions">' + DEFAULT_LOADING_HTML + '</div>'
         
         tvars['body']=body          
+        tvars['search']=self.chain_search_form(chain);
         title=" - block " + params[0]
         tvars['title']="MultiChain Explorer - " + chain.config['display-name'] + title
         tvars['h1']='<a href="'+chain.config['path-name']+'">' + chain.config['display-name'] + '</a>' + title
@@ -725,7 +760,7 @@ class MCEPageHandler():
 #        self.objects.append({"id":"transactions","path":[chain.config['path-name'],"blocktransactions-data",str(params[0])],"params":{"onlylast":1}});
 #        self.objects.append({"id":"block","path":[chain.config['path-name'],"block-data"]+params});
         
-        self.template_vars=tvars
+#        self.template_vars=tvars
         return self.standard_response(tvars)
         
     def handle_transaction(self,chain,params,nparams):
@@ -741,6 +776,7 @@ class MCEPageHandler():
         
         
         tvars['body']=body          
+        tvars['search']=self.chain_search_form(chain);
         title=" - transaction: " + params[0]
         tvars['title']="MultiChain Explorer - " + chain.config['display-name'] + title
         tvars['h1']='<a href="'+chain.config['path-name']+'">' + chain.config['display-name'] + '</a>' + " - transaction: " + params[0][0:10] + "..."
@@ -749,7 +785,7 @@ class MCEPageHandler():
         self.objects=[]
         self.objects.append({"id":"transaction","path":[chain.config['path-name'],"transaction-data"]+params,"params":nparams});
         
-        self.template_vars=tvars
+#        self.template_vars=tvars
         return self.standard_response(tvars)
         
     def handle_notfound(self,chain=None,params=None,nparams=None):
@@ -763,7 +799,7 @@ class MCEPageHandler():
         else:
             tvars['title']="MultiChain Explorer - " + chain.config['display-name'] + title
             tvars['h1']='<a href="'+chain.config['path-name']+'">' + chain.config['display-name'] + '</a>' + title
-        self.template_vars=tvars
+#        self.template_vars=tvars
         self.status=404
         self.objects=[]
         return self.standard_response(tvars)
@@ -778,10 +814,9 @@ class MCEPageHandler():
         else:
             tvars['title']="MultiChain Explorer - " + chain.config['display-name'] + title
             tvars['h1']='<a href="'+chain.config['path-name']+'">' + chain.config['display-name'] + '</a>' + title
-        self.template_vars=tvars
+#        self.template_vars=tvars
         self.status=404
         self.objects=[]
         return self.standard_response(tvars)
-        
         
         

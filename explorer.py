@@ -12,7 +12,6 @@ import utils
 import server
 
 explorer_app = "MultiChain Explorer"
-explorer_version = "2.0"
 
 
 def main(argv):
@@ -30,7 +29,7 @@ def main(argv):
 """)
         return 0
 
-    print (explorer_app + """, version """ + explorer_version + "\n")
+    print (explorer_app + """, version """ + cfg.version + "\n")
     print ("")
     
     args=readconf.parse_argv(argv)

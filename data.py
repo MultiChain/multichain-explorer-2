@@ -169,8 +169,8 @@ def nav_bar(base_url,nparams,items_name=""):
     if not nparams['forward']:
         pages=list(reversed(all_pages))
         
-    bar='<div class="navbar">'
-    bar+='<span class="navbar-pages">'
+    bar='<table class="navbar"><tr>'
+    bar+='<td class="navbar-pages">'
     bar+='<span class="navbar-caption">Page: </span>&nbsp;'
     top_item=0
     
@@ -250,9 +250,9 @@ def nav_bar(base_url,nparams,items_name=""):
             
         count += 1
     
-    bar+='</span>'
-    bar+='&nbsp;&nbsp;'
-    bar+='<span class="navbar-sizes">'
+    bar+='</td>'
+#    bar+='&nbsp;&nbsp;'
+    bar+='<td class="navbar-sizes">'
     bar+='<span class="navbar-caption">'+items_name.capitalize()+' per page: </span>&nbsp;'
                 
     for ct in DEFAULT_COUNTS:
@@ -263,8 +263,8 @@ def nav_bar(base_url,nparams,items_name=""):
         else:            
             link=base_url + '?size=' + str(ct) + '&from=' + str(top_item)
             bar+='<a class="navbar-link" href="' + link + '" title="' + title + '">'+body+'</a>&nbsp;'
-    bar+='</span>'
-    bar+='</div>'
+    bar+='</td>'
+    bar+='</tr></table>'
         
     return bar
     
@@ -546,7 +546,44 @@ class MCEDataHandler():
                 nparams['start']=nparams['thispage']*nparams['pagesize']
         else:
             nparams['start']=-nparams['count']
-                        
+                
+    def handle_search(self,chain,fields):
+        if chain is None:        
+            return '/'
+            
+        
+        not_found_page='/' + chain.config['path-name'] + '/chain'
+        
+        search_value=field_in_dict(fields,'search_value',[None])[0]
+        if search_value is None:
+            return not_found_page
+            
+        not_found_page += '/' + parse.quote_plus(search_value)            
+        
+        if len(search_value) == 64:
+            response=chain.request("getblock",[search_value])
+            if response['result'] is not None:
+                if response['result']['confirmations'] > 0:
+                    return '/' + chain.config['path-name'] + '/block/' + str(response['result']['height'])
+            response=chain.request("getrawtransaction",[search_value,0])
+            if response['result'] is not None:
+                return '/' + chain.config['path-name'] + '/transaction/' + str(search_value)
+        else:
+            response=chain.request("listaddresses",[search_value])
+            if response['result'] is not None:
+                return '/' + chain.config['path-name'] + '/address/' + str(search_value)
+            entity_quoted=parse.quote_plus(search_value)
+            response=chain.request("listassets",[search_value])
+            if response['result'] is not None:
+                return '/' + chain.config['path-name'] + '/asset/' + entity_quoted
+            response=chain.request("liststreams",[search_value])
+            if response['result'] is not None:
+                return '/' + chain.config['path-name'] + '/stream/' + entity_quoted
+ 
+        return not_found_page
+            
+
+                
     def handle_blocks(self,chain,params,nparams):
         if chain is None:        
             return self.standard_response('')

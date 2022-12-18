@@ -1,3 +1,50 @@
+.header-table{
+    width: 100%;
+    margin-bottom: 20px;
+}
+
+.header-table td {
+    vertical-align: middle;
+}
+
+.header-logo {
+    width: 32px;
+}
+
+.header-title {
+    padding-left:10px;
+    padding-right:20px;
+}
+
+.header-search {
+    vertical-align: middle;    
+    text-align: right;
+    white-space: nowrap;
+}
+
+.error-wrapper {
+    color: red;
+}
+
+h1 {
+    vertical-align: middle;    
+    margin-top: 10px;    
+}
+
+.navbar{
+    width: 100%;
+    margin:2px;
+    text-align:left;
+}
+
+.navbar-pages{
+    float:left;
+}
+
+.navbar-sizes{
+    float:right;
+}
+
 .shortlink {
     font-size: smaller;
 }
@@ -33,10 +80,6 @@
 /*background-color: hsl(0,0%,50%);*/
 }
 
-navbar {
-   margin:2em;
-   text-align:center;
-}
 
 .navbar a {
    padding:5px 10px;
