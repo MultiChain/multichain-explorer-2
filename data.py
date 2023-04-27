@@ -1163,14 +1163,21 @@ class MCEDataHandler():
         if (last<=0) and not native_flag:
             return self.standard_response('<div class="empty-list">No assets have been issued in this chain</div>')            
         
-        self.expand_params(nparams,last,True)
+           
+        max_count=0
+        body = ""
+        show_issuer=False
         
+        if last>0:           
+            self.expand_params(nparams,last,True)
+        else:
+            self.expand_params(nparams,1,True)
+            
         response=chain.request("listassets",['*', False,  nparams['count'], nparams['start']])
             
         if response['result'] is None:
             return self.error_response(response)
                     
-        max_count=0
         for asset in response['result']:
             if 'issuecount' in asset:
                 issue_count=asset['issuecount']
@@ -1178,13 +1185,12 @@ class MCEDataHandler():
                     max_count=issue_count
             else:
                 max_count=1000
-                
-        show_issuer=False
+            
         if max_count < 100:
             response=chain.request("listassets",['*', True,  nparams['count'], nparams['start']])
             show_issuer=True
-            
-            
+        
+        
         body=nav_bar(chain.config['path-name'] + '/assets',nparams,"assets ")
             
         body += '''
