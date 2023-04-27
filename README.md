@@ -79,3 +79,9 @@ Substitute `config.ini` for the name of the `.ini` file you created. By default,
 * `daemon` – run the Explorer in the background.
 * `stop` – stop the Explorer running in the background.
 * `status` – get the Explorer's background status.
+
+Major Releases
+--------------
+
+* **Version 2.1** – December 2022 – Added search.
+* **Version 2.0** – June 2021 – Initial release.
