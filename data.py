@@ -1630,7 +1630,7 @@ class MCEDataHandler():
         
         if last<=0:            
             return self.standard_response('<div class="empty-list">No holders found for this asset</div>')            
-            
+                    
         self.expand_params(nparams,last)
         
         response=chain.request("explorerlistassetaddresses",[entity_name,True,nparams['count'],nparams['start']])
@@ -1640,7 +1640,7 @@ class MCEDataHandler():
         
         body = ''
         if nparams['nav']:
-            body+=nav_bar(chain.config['path-name'] + '/assetsholders/' + entity_name,nparams,"addresses ")
+            body+=nav_bar(chain.config['path-name'] + '/assetholders/' + entity_quoted,nparams,"addresses ")
             
         body += '''
             <table class="table table-striped">
